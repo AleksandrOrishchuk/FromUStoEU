@@ -5,10 +5,7 @@ import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.ssho.fromustoeu.converters.Converters
 import java.util.*
-import kotlin.math.absoluteValue
-import kotlin.math.floor
-import kotlin.math.round
-import kotlin.math.roundToInt
+import kotlin.math.*
 
 private const val TAG = "ConvertBucket"
 
@@ -37,8 +34,9 @@ class ConvertBucketViewModel(private val inputValue: Double): BaseObservable() {
     private fun convert(): Double {
         var result = Converters.convert(inputValue, convertToType!!)
 
-        if (convertToType != "celsius" || convertToType != "fahrenheit")
-            result = result.absoluteValue
+//TODO("do not let other values than temperature get to negative state") BUG DETECTED
+//        if (convertToType != "celsius" || convertToType != "fahrenheit")
+//            result = abs(result)
 
         Log.i(TAG,"Got converted value to $convertToType = $result")
 

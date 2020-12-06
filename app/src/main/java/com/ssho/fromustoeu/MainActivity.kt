@@ -2,35 +2,41 @@ package com.ssho.fromustoeu
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.ssho.fromustoeu.databinding.ActivityMainBinding
 
+private const val TAG = "MainActivity"
+
 class MainActivity : AppCompatActivity() {
 
-    private val appStateViewModel: AppStateViewModel by lazy {
-        ViewModelProvider(this).get(AppStateViewModel::class.java)
+    private val mainViewModel: MainViewModel by lazy {
+        ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
-//    private lateinit var binding: ActivityMainBinding
+    private lateinit var mainBinding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-        binding.apply {
-            viewModel = appStateViewModel
+        mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        mainBinding.apply {
+            viewModel = mainViewModel
             lifecycleOwner = this@MainActivity
-            valueEditText.setText(appStateViewModel.currentValueText)
         }
 
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
-        if (currentFragment == null)
-            appStateViewModel.loadInitialAppState()
+        Log.d(TAG, "Binding applied.")
 
-        appStateViewModel.appStateLiveData.observe(this) { appState ->
-            val fragment = ConvertBucketListFragment.newInstance(appState)
+        mainViewModel.mainViewStateLiveData.observe(this) { appState ->
+
+            val currentValue = mainViewModel.currentValueLiveData.value ?: 0.0
+            val fragment =
+                    if (appState.isValueProvided)
+                        ConvertBucketListFragment.newInstance(appState, currentValue)
+                    else
+                        NoValueFragment.newInstance()
+
             supportFragmentManager
                     .beginTransaction()
                     .replace(R.id.fragment_container, fragment)

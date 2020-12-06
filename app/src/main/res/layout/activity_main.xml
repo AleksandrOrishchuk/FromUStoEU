@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.ssho.fromustoeu.AppStateViewModel" />
+            type="com.ssho.fromustoeu.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,6 +43,7 @@
             android:inputType="numberDecimal"
             android:textAlignment="center"
             android:textSize="36sp"
+            android:text="@{viewModel.mainViewStateLiveData.component1()}"
             app:layout_constraintBottom_toTopOf="@+id/fragment_container"
             app:layout_constraintEnd_toStartOf="@+id/toggleButton"
             app:layout_constraintStart_toEndOf="@+id/convert_title"
@@ -60,8 +61,8 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
             android:onClick="@{(view) -> viewModel.onRegionClicked(view)}"
-            android:textOff="@string/toggle_text_EU"
-            android:textOn="@string/toggle_text_US"
+            android:textOn="@string/toggle_text_EU"
+            android:textOff="@string/toggle_text_US"
             android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@+id/fragment_container"
             app:layout_constraintEnd_toEndOf="parent"

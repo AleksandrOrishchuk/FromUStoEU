@@ -20,4 +20,5 @@
     <string name="convert_title_text">Number:</string>
     <string name="toggle_text_EU">EU</string>
     <string name="toggle_text_US">US</string>
+    <string name="guide_text">Enter any number in the field above to kick-start a conversion</string>
 </resources>
