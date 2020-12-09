@@ -17,9 +17,7 @@ private const val INITIAL_IS_VALUE_PROVIDED = false
 class MainViewModel : ViewModel() {
 
     val mainViewStateLiveData: LiveData<MainViewState> get() = _mainViewStateLiveData
-    val currentValueLiveData: LiveData<Double> get() = _currentValueLiveData
     private val _mainViewStateLiveData: MutableLiveData<MainViewState> = MutableLiveData()
-    private val _currentValueLiveData: MutableLiveData<Double> = MutableLiveData()
 
     val valueWatcher = object : TextWatcher {
         override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
@@ -40,7 +38,6 @@ class MainViewModel : ViewModel() {
                 val newValueText = charSequence.toString()
                 val newValue = newValueText.toDouble()
 
-                updateCurrentValue(newValue)
                 updateViewState(
                         _mainViewStateLiveData.value?.copy(
                                 currentValueText = newValueText,
@@ -85,26 +82,20 @@ class MainViewModel : ViewModel() {
     }
 
 
-    private fun updateCurrentValue(value: Double) {
-        _currentValueLiveData.value = value
-    }
-
-
     private fun updateViewState(newMainViewState: MainViewState?) {
         _mainViewStateLiveData.value = newMainViewState
     }
 
-    private fun setInitialState() {
-        var initialValue = ""
 
-        if (INITIAL_IS_VALUE_PROVIDED) {
-            initialValue = INITIAL_VALUE.toString()
-            updateCurrentValue(INITIAL_VALUE)
-        }
+    private fun setInitialState() {
+        var initialValueText = ""
+
+        if (INITIAL_IS_VALUE_PROVIDED)
+            initialValueText = INITIAL_VALUE.toString()
 
         updateViewState(
                 MainViewState(
-                        initialValue,
+                        initialValueText,
                         INITIAL_SYSTEM_FROM,
                         INITIAL_APP_TAB,
                         INITIAL_IS_VALUE_PROVIDED)

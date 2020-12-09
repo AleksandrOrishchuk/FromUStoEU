@@ -19,13 +19,10 @@ class ConvertBucketListFragment : Fragment() {
 
     companion object {
         private const val ARG_PARENT_STATE = "parent_view_state"
-        private const val ARG_VALUE = "current_value"
 
-        fun newInstance(parentViewState: MainViewState,
-                        currentValue: Double): ConvertBucketListFragment {
+        fun newInstance(parentViewState: MainViewState): ConvertBucketListFragment {
             val argsBundle: Bundle = Bundle().apply {
                 putSerializable(ARG_PARENT_STATE, parentViewState)
-                putDouble(ARG_VALUE, currentValue)
             }
 
             return ConvertBucketListFragment().apply {
@@ -44,13 +41,11 @@ class ConvertBucketListFragment : Fragment() {
 
     private lateinit var fragmentBinding: FragmentConvertBucketListBinding
     private lateinit var parentViewState: MainViewState
-    private var currentValue: Double = 0.0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parentViewState = arguments?.getSerializable(ARG_PARENT_STATE) as MainViewState
-        currentValue = arguments?.getDouble(ARG_VALUE) ?: 0.0
     }
 
     override fun onCreateView(
@@ -72,7 +67,6 @@ class ConvertBucketListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Log.d(TAG, "Value received in ListFragment: $currentValue")
 
         fragmentViewModel.fragmentViewState.observe(viewLifecycleOwner) { viewState ->
             fragmentBinding.apply {
@@ -93,17 +87,23 @@ class ConvertBucketListFragment : Fragment() {
         : RecyclerView.ViewHolder(bucketBinding.root) {
 
         fun bind(convertBucket: ConvertBucket) {
-            val sourceMeasureUnitNameResId = resources.getIdentifier(convertBucket.measureTypeFrom,
+            val sourceMeasureUnitNameResId = resources.getIdentifier(convertBucket.sourceUnitName,
                     "string",
                     requireContext().applicationInfo.packageName
             )
 
-            val targetMeasureUnitNameResId = resources.getIdentifier(convertBucket.measureTypeTo,
+            val targetMeasureUnitNameResId = resources.getIdentifier(convertBucket.targetUnitName,
                     "string",
                     requireContext().applicationInfo.packageName
             )
 
             bucketBinding.apply {
+                sourceUnitNameTextView.visibility =
+                    if (convertBucket.appTab == TAB_HOME)
+                        View.VISIBLE
+                    else
+                        View.GONE
+
                 viewModel?.apply {
                     setConvertBucket(
                             convertBucket,
@@ -124,7 +124,7 @@ class ConvertBucketListFragment : Fragment() {
                     parent,
                     false
             )
-            bucketBinding.viewModel = ConvertBucketViewModel(currentValue)
+            bucketBinding.viewModel = ConvertBucketViewModel()
             bucketBinding.lifecycleOwner = viewLifecycleOwner
 
             return ConvertBucketHolder(bucketBinding)

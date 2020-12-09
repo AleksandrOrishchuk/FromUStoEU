@@ -8,7 +8,7 @@ import kotlin.math.*
 
 private const val TAG = "ConvertBucket"
 
-class ConvertBucketViewModel(private var inputValue: Double) {
+class ConvertBucketViewModel {
     val bucketViewState: LiveData<ConvertBucketViewState> get() = _bucketViewState
     private val _bucketViewState: MutableLiveData<ConvertBucketViewState> = MutableLiveData()
 
@@ -22,13 +22,15 @@ class ConvertBucketViewModel(private var inputValue: Double) {
                          sourceUnitNameResId: Int,
                          targetUnitNameResId: Int) {
         this.convertBucket = convertBucket
-        val convertedValue = getConvertResult()
-        val valueText = getValueText(convertedValue)
 
-        updateViewState(_bucketViewState.value?.copy(
-            valueToDisplay = valueText,
-            sourceUnitNameResID = sourceUnitNameResId,
-            targetUnitNameResID = targetUnitNameResId)
+        val convertedValue = getConvertResult()
+        val convertedValueText = getValueText(convertedValue)
+
+        updateViewState(
+            _bucketViewState.value?.copy(
+                convertedValueText = convertedValueText,
+                sourceUnitNameResID = sourceUnitNameResId,
+                targetUnitNameResID = targetUnitNameResId)
         )
     }
 
@@ -39,24 +41,24 @@ class ConvertBucketViewModel(private var inputValue: Double) {
             String.format("%.2f", round(convertedValue * 100) / 100)
     }
 
-    private fun updateViewState(newViewState: ConvertBucketViewState?) {
-        _bucketViewState.value = newViewState
-    }
-
     private fun getConvertResult(): Double {
-        val convertTargetName: String = convertBucket.measureTypeTo
-        if (convertTargetName != "celsius" || convertTargetName != "fahrenheit")
+        var inputValue = convertBucket.sourceValueText.toDouble()
+        val targetUnitName: String = convertBucket.targetUnitName
+
+        if (targetUnitName != "celsius" || targetUnitName != "fahrenheits")
             inputValue = abs(inputValue)
 
-        val result = Converters.convert(inputValue, convertTargetName)
-
-        Log.i(TAG,"Got converted value to $convertTargetName = $result")
+        val result = Converters.convert(inputValue, targetUnitName)
+        Log.i(TAG,"Got converted value to $targetUnitName = $result")
 
         return result
     }
 
+    private fun updateViewState(newViewState: ConvertBucketViewState?) {
+        _bucketViewState.value = newViewState
+    }
 }
 
 data class ConvertBucketViewState(var sourceUnitNameResID:Int = R.string.empty,
-                                  var valueToDisplay: String = "",
+                                  var convertedValueText: String = "",
                                   var targetUnitNameResID: Int = R.string.empty)

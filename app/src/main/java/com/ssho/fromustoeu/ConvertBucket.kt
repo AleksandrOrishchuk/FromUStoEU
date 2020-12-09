@@ -7,7 +7,8 @@ import java.io.Serializable
 @Entity
 data class ConvertBucket(@PrimaryKey val uid: Int,
                          var appTab: String,
-                         var measureSystemFrom: Int,
-                         var measureTypeFrom: String,
-                         var measureTypeTo: String
+                         var sourceMeasureSystem: Int,
+                         var sourceUnitName: String,
+                         var targetUnitName: String,
+                         var sourceValueText: String
                          ) : Serializable

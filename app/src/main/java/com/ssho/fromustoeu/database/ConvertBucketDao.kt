@@ -6,6 +6,6 @@ import com.ssho.fromustoeu.ConvertBucket
 
 @Dao
 interface ConvertBucketDao {
-    @Query("SELECT * FROM ConvertBucket WHERE appTab=(:appTab) AND measureSystemFrom=(:measureSystemFrom)")
+    @Query("SELECT * FROM ConvertBucket WHERE appTab=(:appTab) AND sourceMeasureSystem=(:measureSystemFrom)")
     suspend fun getBuckets(appTab: String, measureSystemFrom: Int): List<ConvertBucket>
 }

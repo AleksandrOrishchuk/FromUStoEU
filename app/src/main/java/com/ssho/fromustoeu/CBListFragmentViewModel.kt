@@ -21,6 +21,7 @@ class CBListFragmentViewModel(private val parentViewState: MainViewState) : View
 
         viewModelScope.launch {
             val convertBuckets = selectConvertBucketsFromDatabase()
+//TODO("Further logic if appTab != HOME to modify list based on SourceUnitName chosen in widget")
 
             _fragmentViewState.postValue(
                 _fragmentViewState.value?.copy(convertBucketsForRecycler = convertBuckets)
@@ -32,9 +33,8 @@ class CBListFragmentViewModel(private val parentViewState: MainViewState) : View
         val appTab = parentViewState.appTab
         val measureSystemFrom = parentViewState.measureSystemFrom
 
-        return when (appTab) {
-            "home" -> convertBucketRepository.getBuckets(appTab, measureSystemFrom)
-            else -> emptyList()
+        return convertBucketRepository.getBuckets(appTab, measureSystemFrom).onEach { bucket ->
+            bucket.sourceValueText = parentViewState.currentValueText
         }
     }
 

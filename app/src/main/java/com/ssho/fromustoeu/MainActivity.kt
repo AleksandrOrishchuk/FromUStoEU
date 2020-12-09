@@ -28,12 +28,12 @@ class MainActivity : AppCompatActivity() {
 
         Log.d(TAG, "Binding applied.")
 
-        mainViewModel.mainViewStateLiveData.observe(this) { appState ->
+        mainViewModel.mainViewStateLiveData.observe(this) { mainViewState ->
 
-            val currentValue = mainViewModel.currentValueLiveData.value ?: 0.0
+//            val currentValue = mainViewModel.currentValueLiveData.value ?: 0.0
             val fragment =
-                    if (appState.isValueProvided)
-                        ConvertBucketListFragment.newInstance(appState, currentValue)
+                    if (mainViewState.isValueProvided)
+                        ConvertBucketListFragment.newInstance(mainViewState)
                     else
                         NoValueFragment.newInstance()
 

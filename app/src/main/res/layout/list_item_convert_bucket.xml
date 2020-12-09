@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/measure_type_from_textView"
+            android:id="@+id/source_unit_name_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -42,7 +42,7 @@
             app:layout_constraintBottom_toTopOf="@+id/converted_value_textView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/measure_type_from_textView"
+            app:layout_constraintTop_toBottomOf="@+id/source_unit_name_textView"
             app:srcCompat="@drawable/ic_down_arrow" />
 
         <TextView
@@ -53,14 +53,14 @@
             android:textAlignment="center"
             android:textSize="48sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/measure_type_to_textView"
+            app:layout_constraintBottom_toTopOf="@id/target_unit_name_textView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/down_arrow_imageView"
             tools:text="50" />
 
         <TextView
-            android:id="@+id/measure_type_to_textView"
+            android:id="@+id/target_unit_name_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
