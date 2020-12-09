@@ -74,11 +74,12 @@ class ConvertBucketListFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         Log.d(TAG, "Value received in ListFragment: $currentValue")
 
-        fragmentViewModel.convertBucketsLiveData.observe(viewLifecycleOwner) { convertBuckets ->
+        fragmentViewModel.fragmentViewState.observe(viewLifecycleOwner) { viewState ->
             fragmentBinding.apply {
 
                 convertRecyclerView.apply {
-                    adapter = ConvertBucketAdapter(convertBuckets.toTypedArray())
+                    val convertBuckets = viewState.convertBucketsForRecycler
+                    adapter = ConvertBucketAdapter(convertBuckets)
                     layoutManager = GridLayoutManager(context, 2)
 
                     Log.d(TAG, "Recycler view List received. List size: ${convertBuckets.size} items")
@@ -114,7 +115,7 @@ class ConvertBucketListFragment : Fragment() {
     }
 
 
-    private inner class ConvertBucketAdapter(private val convertBuckets: Array<ConvertBucket>)
+    private inner class ConvertBucketAdapter(private val convertBuckets: List<ConvertBucket>)
         : RecyclerView.Adapter<ConvertBucketHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConvertBucketHolder {

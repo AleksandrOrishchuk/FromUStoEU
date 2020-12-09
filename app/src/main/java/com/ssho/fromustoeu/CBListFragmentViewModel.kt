@@ -8,18 +8,34 @@ private const val TAG = "CBListFragment"
 
 class CBListFragmentViewModel(private val parentViewState: MainViewState) : ViewModel() {
     val fragmentViewState : LiveData<FragmentViewState> get() = _fragmentViewState
-    private val _fragmentViewState: MutableLiveData<FragmentViewState> = MutableLiveData(FragmentViewState())
+    private val _fragmentViewState: MutableLiveData<FragmentViewState> = MutableLiveData()
 
     private val convertBucketRepository = ConvertBucketRepository.get()
-    val convertBucketsLiveData = selectConvertBucketsFromDatabase()
 
+    init {
+        setInitialViewState()
+    }
 
+    private fun setInitialViewState() {
+        _fragmentViewState.value = FragmentViewState()
 
-    private fun selectConvertBucketsFromDatabase(): LiveData<List<ConvertBucket>> {
+        viewModelScope.launch {
+            val convertBuckets = selectConvertBucketsFromDatabase()
+
+            _fragmentViewState.postValue(
+                _fragmentViewState.value?.copy(convertBucketsForRecycler = convertBuckets)
+            )
+        }
+    }
+
+    private suspend fun selectConvertBucketsFromDatabase(): List<ConvertBucket> {
         val appTab = parentViewState.appTab
         val measureSystemFrom = parentViewState.measureSystemFrom
 
-        return convertBucketRepository.getBuckets(appTab, measureSystemFrom)
+        return when (appTab) {
+            "home" -> convertBucketRepository.getBuckets(appTab, measureSystemFrom)
+            else -> emptyList()
+        }
     }
 
 }
@@ -32,19 +48,4 @@ class CBListFragmentViewModelFactory(private val parentViewState: MainViewState)
 
 }
 
-data class FragmentViewState (var convertBucketsForRecycler: Array<ConvertBucket> = emptyArray()) : Serializable {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as FragmentViewState
-
-        if (!convertBucketsForRecycler.contentEquals(other.convertBucketsForRecycler)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return convertBucketsForRecycler.contentHashCode()
-    }
-}
+data class FragmentViewState (var convertBucketsForRecycler: List<ConvertBucket> = emptyList()) : Serializable

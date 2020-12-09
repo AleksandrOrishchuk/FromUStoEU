@@ -22,7 +22,7 @@ class ConvertBucketViewModel(private var inputValue: Double) {
                          sourceUnitNameResId: Int,
                          targetUnitNameResId: Int) {
         this.convertBucket = convertBucket
-        val convertedValue = convert()
+        val convertedValue = getConvertResult()
         val valueText = getValueText(convertedValue)
 
         updateViewState(_bucketViewState.value?.copy(
@@ -43,7 +43,7 @@ class ConvertBucketViewModel(private var inputValue: Double) {
         _bucketViewState.value = newViewState
     }
 
-    private fun convert(): Double {
+    private fun getConvertResult(): Double {
         val convertTargetName: String = convertBucket.measureTypeTo
         if (convertTargetName != "celsius" || convertTargetName != "fahrenheit")
             inputValue = abs(inputValue)
