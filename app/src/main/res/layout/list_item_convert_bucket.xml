@@ -13,34 +13,72 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/converted_value_display"
+            android:id="@+id/measure_type_from_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@{viewModel.convertedValueDisplay}"
+            android:layout_marginTop="8dp"
+            android:paddingStart="4dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="4dp"
+            android:text="@{viewModel.bucketViewState.component1()}"
             android:textAlignment="center"
-            android:textSize="28sp"
-            android:textStyle="bold"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toTopOf="@+id/down_arrow_imageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="50" />
+            tools:text="Fahrenheits" />
 
-        <TextView
-            android:id="@+id/converted_value_type"
+        <ImageView
+            android:id="@+id/down_arrow_imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            app:layout_constraintBottom_toTopOf="@+id/converted_value_textView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/measure_type_from_textView"
+            app:srcCompat="@drawable/ic_down_arrow" />
+
+        <TextView
+            android:id="@+id/converted_value_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.bucketViewState.component2()}"
+            android:textAlignment="center"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/measure_type_to_textView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/down_arrow_imageView"
+            tools:text="50" />
+
+        <TextView
+            android:id="@+id/measure_type_to_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="4dp"
-            android:text="@{viewModel.convertToTypeDisplay}"
+            android:paddingStart="4dp"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="4dp"
+            android:text="@{viewModel.bucketViewState.component3()}"
             android:textAlignment="center"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/converted_value_display"
+            app:layout_constraintTop_toBottomOf="@+id/converted_value_textView"
             tools:text="Celsius" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

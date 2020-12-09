@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 
 private const val TAG = "MainViewModel"
 private const val INITIAL_VALUE = 55.5
-private const val INITIAL_CONVERT_FROM = CONVERT_FROM_US
+private const val INITIAL_SYSTEM_FROM = FROM_IMPERIAL_US
 private const val INITIAL_APP_TAB = TAB_HOME
 private const val INITIAL_IS_VALUE_PROVIDED = false
 
@@ -32,6 +32,9 @@ class MainViewModel : ViewModel() {
                 )
                 return
             }
+
+            if (charSequence.length == 1 && charSequence[0] == '-')
+                return
 
             try {
                 val newValueText = charSequence.toString()
@@ -69,14 +72,14 @@ class MainViewModel : ViewModel() {
 
     fun onRegionClicked(view: View) {
         val regionFrom =
-                if (_mainViewStateLiveData.value?.convertFrom == CONVERT_FROM_US)
-                    CONVERT_FROM_EU
+                if (_mainViewStateLiveData.value?.measureSystemFrom == FROM_IMPERIAL_US)
+                    FROM_METRIC_EU
                 else
-                    CONVERT_FROM_US
+                    FROM_IMPERIAL_US
 
         updateViewState(
                 _mainViewStateLiveData.value?.copy(
-                        convertFrom = regionFrom
+                        measureSystemFrom = regionFrom
                 )
         )
     }
@@ -102,7 +105,7 @@ class MainViewModel : ViewModel() {
         updateViewState(
                 MainViewState(
                         initialValue,
-                        INITIAL_CONVERT_FROM,
+                        INITIAL_SYSTEM_FROM,
                         INITIAL_APP_TAB,
                         INITIAL_IS_VALUE_PROVIDED)
         )

@@ -1,46 +1,62 @@
 package com.ssho.fromustoeu
 
 import android.util.Log
-import androidx.databinding.BaseObservable
-import androidx.databinding.Bindable
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.ssho.fromustoeu.converters.Converters
-import java.util.*
 import kotlin.math.*
 
 private const val TAG = "ConvertBucket"
 
-class ConvertBucketViewModel(private val inputValue: Double): BaseObservable() {
+class ConvertBucketViewModel(private var inputValue: Double) {
+    val bucketViewState: LiveData<ConvertBucketViewState> get() = _bucketViewState
+    private val _bucketViewState: MutableLiveData<ConvertBucketViewState> = MutableLiveData()
 
-    var convertToType: String? = null
-        set(value) {
-            field = value
-            notifyChange()
-        }
+    private lateinit var convertBucket: ConvertBucket
 
-    @get:Bindable
-    val convertToTypeDisplay: String? get() = convertToType?.toUpperCase(Locale.ROOT)
+    init {
+        _bucketViewState.value = ConvertBucketViewState()
+    }
 
-    @get:Bindable
-    val convertedValueDisplay: String get() {
+    fun setConvertBucket(convertBucket: ConvertBucket,
+                         sourceUnitNameResId: Int,
+                         targetUnitNameResId: Int) {
+        this.convertBucket = convertBucket
         val convertedValue = convert()
+        val valueText = getValueText(convertedValue)
 
+        updateViewState(_bucketViewState.value?.copy(
+            valueToDisplay = valueText,
+            sourceUnitNameResID = sourceUnitNameResId,
+            targetUnitNameResID = targetUnitNameResId)
+        )
+    }
+
+    private fun getValueText(convertedValue: Double): String {
         return if (floor(convertedValue) == convertedValue)
             convertedValue.toInt().toString()
         else
             String.format("%.2f", round(convertedValue * 100) / 100)
     }
 
+    private fun updateViewState(newViewState: ConvertBucketViewState?) {
+        _bucketViewState.value = newViewState
+    }
 
     private fun convert(): Double {
-        var result = Converters.convert(inputValue, convertToType!!)
+        val convertTargetName: String = convertBucket.measureTypeTo
+        if (convertTargetName != "celsius" || convertTargetName != "fahrenheit")
+            inputValue = abs(inputValue)
 
-//TODO("do not let other values than temperature get to negative state") BUG DETECTED
-//        if (convertToType != "celsius" || convertToType != "fahrenheit")
-//            result = abs(result)
+        val result = Converters.convert(inputValue, convertTargetName)
 
-        Log.i(TAG,"Got converted value to $convertToType = $result")
+        Log.i(TAG,"Got converted value to $convertTargetName = $result")
 
         return result
     }
 
 }
+
+data class ConvertBucketViewState(var sourceUnitNameResID:Int = R.string.empty,
+                                  var valueToDisplay: String = "",
+                                  var targetUnitNameResID: Int = R.string.empty)

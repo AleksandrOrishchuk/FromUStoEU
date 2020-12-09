@@ -20,7 +20,9 @@ class ConvertBucketListFragment : Fragment() {
     companion object {
         private const val ARG_PARENT_STATE = "parent_view_state"
         private const val ARG_VALUE = "current_value"
-        fun newInstance(parentViewState: MainViewState, currentValue: Double): ConvertBucketListFragment {
+
+        fun newInstance(parentViewState: MainViewState,
+                        currentValue: Double): ConvertBucketListFragment {
             val argsBundle: Bundle = Bundle().apply {
                 putSerializable(ARG_PARENT_STATE, parentViewState)
                 putDouble(ARG_VALUE, currentValue)
@@ -32,9 +34,12 @@ class ConvertBucketListFragment : Fragment() {
         }
     }
 
+
     private val fragmentViewModel: CBListFragmentViewModel by lazy {
-        ViewModelProvider(this,
-                CBListFragmentViewModelFactory(parentViewState)).get(CBListFragmentViewModel::class.java)
+        ViewModelProvider(
+                this,
+                CBListFragmentViewModelFactory(parentViewState)
+        ).get(CBListFragmentViewModel::class.java)
     }
 
     private lateinit var fragmentBinding: FragmentConvertBucketListBinding
@@ -60,6 +65,7 @@ class ConvertBucketListFragment : Fragment() {
                 false
         )
         fragmentBinding.lifecycleOwner = viewLifecycleOwner
+        fragmentBinding.viewModel = fragmentViewModel
 
         return fragmentBinding.root
     }
@@ -68,20 +74,14 @@ class ConvertBucketListFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         Log.d(TAG, "Value received in ListFragment: $currentValue")
 
-        fragmentViewModel.fragmentViewState.observe(viewLifecycleOwner) { fragmentViewState ->
+        fragmentViewModel.convertBucketsLiveData.observe(viewLifecycleOwner) { convertBuckets ->
             fragmentBinding.apply {
 
                 convertRecyclerView.apply {
-                    val adapterList =
-                            if (fragmentViewState.recyclerListResID == 0)
-                                emptyArray<String>()
-                            else
-                                resources.getStringArray(fragmentViewState.recyclerListResID)
-
-                    adapter = ConvertBucketAdapter(adapterList)
+                    adapter = ConvertBucketAdapter(convertBuckets.toTypedArray())
                     layoutManager = GridLayoutManager(context, 2)
 
-                    Log.d(TAG, "Recycler view List received.")
+                    Log.d(TAG, "Recycler view List received. List size: ${convertBuckets.size} items")
                 }
             }
         }
@@ -90,17 +90,31 @@ class ConvertBucketListFragment : Fragment() {
 
     private inner class ConvertBucketHolder(private val bucketBinding: ListItemConvertBucketBinding)
         : RecyclerView.ViewHolder(bucketBinding.root) {
-//        init {
-//        }
 
-        fun bind(convertToType: String) {
-            bucketBinding.viewModel = ConvertBucketViewModel(currentValue)
-            bucketBinding.viewModel!!.convertToType = convertToType
+        fun bind(convertBucket: ConvertBucket) {
+            val sourceMeasureUnitNameResId = resources.getIdentifier(convertBucket.measureTypeFrom,
+                    "string",
+                    requireContext().applicationInfo.packageName
+            )
+
+            val targetMeasureUnitNameResId = resources.getIdentifier(convertBucket.measureTypeTo,
+                    "string",
+                    requireContext().applicationInfo.packageName
+            )
+
+            bucketBinding.apply {
+                viewModel?.apply {
+                    setConvertBucket(
+                            convertBucket,
+                            sourceMeasureUnitNameResId,
+                            targetMeasureUnitNameResId)
+                }
+            }
         }
     }
 
 
-    private inner class ConvertBucketAdapter(private val conversionTypeList: Array<String>)
+    private inner class ConvertBucketAdapter(private val convertBuckets: Array<ConvertBucket>)
         : RecyclerView.Adapter<ConvertBucketHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConvertBucketHolder {
@@ -109,15 +123,18 @@ class ConvertBucketListFragment : Fragment() {
                     parent,
                     false
             )
+            bucketBinding.viewModel = ConvertBucketViewModel(currentValue)
+            bucketBinding.lifecycleOwner = viewLifecycleOwner
+
             return ConvertBucketHolder(bucketBinding)
         }
 
         override fun onBindViewHolder(holder: ConvertBucketHolder, position: Int) {
-            val convertToType = conversionTypeList[position]
-            holder.bind(convertToType)
+            val convertBucket = convertBuckets[position]
+            holder.bind(convertBucket)
         }
 
-        override fun getItemCount(): Int = conversionTypeList.size
+        override fun getItemCount(): Int = convertBuckets.size
 
     }
 }

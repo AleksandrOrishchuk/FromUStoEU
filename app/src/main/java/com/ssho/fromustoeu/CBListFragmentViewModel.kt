@@ -1,36 +1,27 @@
 package com.ssho.fromustoeu
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
+import kotlinx.coroutines.launch
 import java.io.Serializable
+
+private const val TAG = "CBListFragment"
 
 class CBListFragmentViewModel(private val parentViewState: MainViewState) : ViewModel() {
     val fragmentViewState : LiveData<FragmentViewState> get() = _fragmentViewState
-    private val _fragmentViewState: MutableLiveData<FragmentViewState> = MutableLiveData()
+    private val _fragmentViewState: MutableLiveData<FragmentViewState> = MutableLiveData(FragmentViewState())
 
-    init {
-        getInitialViewState()
+    private val convertBucketRepository = ConvertBucketRepository.get()
+    val convertBucketsLiveData = selectConvertBucketsFromDatabase()
+
+
+
+    private fun selectConvertBucketsFromDatabase(): LiveData<List<ConvertBucket>> {
+        val appTab = parentViewState.appTab
+        val measureSystemFrom = parentViewState.measureSystemFrom
+
+        return convertBucketRepository.getBuckets(appTab, measureSystemFrom)
     }
 
-    private fun getInitialViewState() {
-        _fragmentViewState.value = FragmentViewState(getRecyclerListResID())
-    }
-
-    private fun getRecyclerListResID() : Int {
-        val convertFrom: Int = parentViewState.convertFrom
-
-        return when (parentViewState.appTab) {
-            TAB_HOME -> {
-                if (convertFrom == CONVERT_FROM_US)
-                    R.array.home_tab_conversions_from_us
-                else
-                    R.array.home_tab_conversions_from_eu
-            }
-            else -> 0
-        }
-    }
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -41,4 +32,19 @@ class CBListFragmentViewModelFactory(private val parentViewState: MainViewState)
 
 }
 
-data class FragmentViewState (var recyclerListResID: Int) : Serializable
+data class FragmentViewState (var convertBucketsForRecycler: Array<ConvertBucket> = emptyArray()) : Serializable {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FragmentViewState
+
+        if (!convertBucketsForRecycler.contentEquals(other.convertBucketsForRecycler)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return convertBucketsForRecycler.contentHashCode()
+    }
+}

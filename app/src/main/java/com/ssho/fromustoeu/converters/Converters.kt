@@ -2,18 +2,18 @@ package com.ssho.fromustoeu.converters
 
 class Converters {
     companion object {
-        fun convert(value: Double, convertToType: String): Double {
+        fun convert(value: Double, convertTargetName: String): Double {
             value.let {
-                return when (convertToType) {
+                return when (convertTargetName) {
                     "celsius" -> toCelsius(it)
                     "fahrenheits" -> toFahrenheits(it)
                     "inches" -> toInch(it)
                     "feet" -> toFeet(it)
                     "meters" -> toMeters(it)
-                    "square Feet" -> toSqFeet(it)
-                    "square Meters" -> toSqMeters(it)
-                    "miles Per Hour" -> toMPH(it)
-                    "kilometers Per Hour" -> toKMPH(it)
+                    "square_feet" -> toSqFeet(it)
+                    "square_meters" -> toSqMeters(it)
+                    "miles_per_hour" -> toMPH(it)
+                    "kilometers_per_hour" -> toKMPH(it)
                     "kilograms" -> toKilograms(it)
                     "pounds" -> toPounds(it)
                     else -> it

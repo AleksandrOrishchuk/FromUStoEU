@@ -1,24 +1,20 @@
 <resources>
-    <string-array name="home_tab_conversions_from_us">
-        <item>celsius</item>
-        <item>kilometers Per Hour</item>
-        <item>meters</item>
-        <item>square Meters</item>
-        <item>kilograms</item>
-    </string-array>
-
-    <string-array name="home_tab_conversions_from_eu">
-        <item>fahrenheits</item>
-        <item>miles Per Hour</item>
-        <item>feet</item>
-        <item>square Feet</item>
-        <item>pounds</item>
-    </string-array>
-
     <string name="app_name">From US to EU</string>
     <string name="edit_number_hint">Type a number</string>
     <string name="convert_title_text">Number:</string>
     <string name="toggle_text_EU">EU</string>
     <string name="toggle_text_US">US</string>
     <string name="guide_text">Enter any number in the field above to kick-start a conversion</string>
+    <string name="empty" />
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheits">Fahrenheits</string>
+    <string name="kilometers_per_hour">Kilometers per hour</string>
+    <string name="miles_per_hour">Miles per hour</string>
+    <string name="meters">Meters</string>
+    <string name="feet">Feet</string>
+    <string name="inches">Inches</string>
+    <string name="square_meters">Square meters</string>
+    <string name="square_feet">Square feet</string>
+    <string name="kilograms">Kilograms</string>
+    <string name="pounds">Pounds</string>
 </resources>
