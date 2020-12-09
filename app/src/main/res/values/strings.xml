@@ -12,9 +12,15 @@
     <string name="miles_per_hour">Miles per hour</string>
     <string name="meters">Meters</string>
     <string name="feet">Feet</string>
+    <string name="centimeters">Centimeters</string>
     <string name="inches">Inches</string>
     <string name="square_meters">Square meters</string>
     <string name="square_feet">Square feet</string>
     <string name="kilograms">Kilograms</string>
     <string name="pounds">Pounds</string>
+    <string name="grams">Grams</string>
+    <string name="ounces">Ounces</string>
+    <string name="litres">Litres</string>
+    <string name="gallons">US Gallons</string>
+
 </resources>
