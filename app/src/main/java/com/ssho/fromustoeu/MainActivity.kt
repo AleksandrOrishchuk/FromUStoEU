@@ -41,6 +41,11 @@ class MainActivity : AppCompatActivity() {
                     .replace(R.id.fragment_container, fragment)
                     .commit()
         }
+
+        mainViewModel.isSoftKeyboardFocused.observe(this) { hasFocus ->
+            if (!hasFocus)
+                closeSoftKeyboard(this, mainBinding.valueEditText)
+        }
     }
 
 }

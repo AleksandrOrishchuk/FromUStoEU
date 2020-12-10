@@ -80,6 +80,16 @@ class ConvertBucketListFragment : Fragment() {
                 }
             }
         }
+
+        fragmentViewModel.isRecyclerViewScrolling.observe(viewLifecycleOwner) { isScrolling ->
+            if (isScrolling)
+                closeSoftKeyboard(requireContext(), fragmentBinding.convertRecyclerView)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        fragmentBinding.convertRecyclerView.clearOnScrollListeners()
     }
 
 

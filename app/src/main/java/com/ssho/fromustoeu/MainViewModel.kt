@@ -18,6 +18,8 @@ class MainViewModel : ViewModel() {
 
     val mainViewStateLiveData: LiveData<MainViewState> get() = _mainViewStateLiveData
     private val _mainViewStateLiveData: MutableLiveData<MainViewState> = MutableLiveData()
+    val isSoftKeyboardFocused: LiveData<Boolean> get() = _isSoftKeyboardFocused
+    private val _isSoftKeyboardFocused: MutableLiveData<Boolean> = MutableLiveData(true)
 
     val valueWatcher = object : TextWatcher {
         override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
@@ -60,6 +62,8 @@ class MainViewModel : ViewModel() {
             //nothing
         }
     }
+
+    val onFocusChangedListener = View.OnFocusChangeListener { _, hasFocus -> _isSoftKeyboardFocused.value = hasFocus }
 
 
     init {
