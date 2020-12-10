@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.mainViewStateLiveData.observe(this) { mainViewState ->
 
-//            val currentValue = mainViewModel.currentValueLiveData.value ?: 0.0
             val fragment =
                     if (mainViewState.isValueProvided)
                         ConvertBucketListFragment.newInstance(mainViewState)
