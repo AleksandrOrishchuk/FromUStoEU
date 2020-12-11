@@ -18,19 +18,33 @@ class ConvertBucketViewModel {
         _bucketViewState.value = ConvertBucketViewState()
     }
 
-    fun setConvertBucket(convertBucket: ConvertBucket,
-                         sourceUnitNameResId: Int,
-                         targetUnitNameResId: Int) {
+//    fun setConvertBucket(convertBucket: ConvertBucket,
+//                         sourceUnitNameResId: Int,
+//                         targetUnitNameResId: Int) {
+//        this.convertBucket = convertBucket
+//
+//        val convertedValue = getConvertResult()
+//        val convertedValueText = getValueText(convertedValue)
+//
+//        updateViewState(
+//            _bucketViewState.value?.copy(
+//                convertedValueText = convertedValueText,
+//                sourceUnitNameResID = sourceUnitNameResId,
+//                targetUnitNameResID = targetUnitNameResId)
+//        )
+//    }
+
+    fun setConvertBucket(convertBucket: ConvertBucket) {
         this.convertBucket = convertBucket
 
         val convertedValue = getConvertResult()
         val convertedValueText = getValueText(convertedValue)
 
         updateViewState(
-            _bucketViewState.value?.copy(
-                convertedValueText = convertedValueText,
-                sourceUnitNameResID = sourceUnitNameResId,
-                targetUnitNameResID = targetUnitNameResId)
+                _bucketViewState.value?.copy(
+                        convertedValueText = convertedValueText,
+                        sourceUnitName = convertBucket.sourceUnitName,
+                        targetUnitName = convertBucket.targetUnitName)
         )
     }
 
@@ -59,6 +73,10 @@ class ConvertBucketViewModel {
     }
 }
 
-data class ConvertBucketViewState(var sourceUnitNameResID:Int = R.string.empty,
+//data class ConvertBucketViewState(var sourceUnitNameResID:Int = R.string.empty,
+//                                  var convertedValueText: String = "",
+//                                  var targetUnitNameResID: Int = R.string.empty)
+
+data class ConvertBucketViewState(var sourceUnitName: String = "",
                                   var convertedValueText: String = "",
-                                  var targetUnitNameResID: Int = R.string.empty)
+                                  var targetUnitName: String = "")

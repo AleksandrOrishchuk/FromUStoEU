@@ -97,29 +97,8 @@ class ConvertBucketListFragment : Fragment() {
         : RecyclerView.ViewHolder(bucketBinding.root) {
 
         fun bind(convertBucket: ConvertBucket) {
-            val sourceMeasureUnitNameResId = resources.getIdentifier(convertBucket.sourceUnitName,
-                    "string",
-                    requireContext().applicationInfo.packageName
-            )
-
-            val targetMeasureUnitNameResId = resources.getIdentifier(convertBucket.targetUnitName,
-                    "string",
-                    requireContext().applicationInfo.packageName
-            )
-
-            bucketBinding.apply {
-                sourceUnitNameTextView.visibility =
-                    if (convertBucket.appTab == TAB_HOME)
-                        View.VISIBLE
-                    else
-                        View.GONE
-
-                viewModel?.apply {
-                    setConvertBucket(
-                            convertBucket,
-                            sourceMeasureUnitNameResId,
-                            targetMeasureUnitNameResId)
-                }
+            bucketBinding.viewModel?.apply {
+                setConvertBucket(convertBucket)
             }
         }
     }

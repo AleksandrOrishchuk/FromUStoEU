@@ -18,6 +18,7 @@ class CBListFragmentViewModel(private val parentViewState: MainViewState) : View
     val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             super.onScrollStateChanged(recyclerView, newState)
+
             if (newState == RecyclerView.SCROLL_STATE_DRAGGING)
                 _isRecyclerViewScrolling.value = true
             if (newState == RecyclerView.SCROLL_STATE_IDLE)
@@ -30,14 +31,11 @@ class CBListFragmentViewModel(private val parentViewState: MainViewState) : View
     }
 
     private fun setInitialViewState() {
-        _fragmentViewState.value = FragmentViewState()
-
         viewModelScope.launch {
             val convertBuckets = selectConvertBucketsFromDatabase()
-//TODO("Further logic if appTab != HOME to modify list based on SourceUnitName chosen in widget")
 
             _fragmentViewState.postValue(
-                _fragmentViewState.value?.copy(convertBucketsForRecycler = convertBuckets)
+                    FragmentViewState(convertBucketsForRecycler = convertBuckets)
             )
         }
     }
@@ -50,7 +48,6 @@ class CBListFragmentViewModel(private val parentViewState: MainViewState) : View
             bucket.sourceValueText = parentViewState.currentValueText
         }
     }
-
 }
 
 @Suppress("UNCHECKED_CAST")
