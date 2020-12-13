@@ -30,6 +30,11 @@ fun bindOnScrollChangeListener(recyclerView: RecyclerView, onScrollListener: Rec
     recyclerView.addOnScrollListener(onScrollListener)
 }
 
+@BindingAdapter("onLongClickListener")
+fun bindOnLongClickListener(view: View, onLongClickListener: View.OnLongClickListener) {
+    view.setOnLongClickListener(onLongClickListener)
+}
+
 @BindingAdapter("setTextFromStringResourceName")
 fun bindResourceIdFromResourceName(textView: TextView, resourceName: String?) {
     if (resourceName == null || resourceName.isEmpty()) {

@@ -1,6 +1,11 @@
 package com.ssho.fromustoeu
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.ssho.fromustoeu.converters.Converters
@@ -14,25 +19,24 @@ class ConvertBucketViewModel {
 
     private lateinit var convertBucket: ConvertBucket
 
+    val onLongClickListener = object : View.OnLongClickListener {
+        override fun onLongClick(itemView: View): Boolean {
+            if (bucketViewState.value == null)
+                return false
+
+            val context = itemView.context
+            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("simple text", bucketViewState.value?.convertedValueText)
+            clipboard.setPrimaryClip(clip)
+            Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_LONG).show()
+
+            return true
+        }
+    }
+
     init {
         _bucketViewState.value = ConvertBucketViewState()
     }
-
-//    fun setConvertBucket(convertBucket: ConvertBucket,
-//                         sourceUnitNameResId: Int,
-//                         targetUnitNameResId: Int) {
-//        this.convertBucket = convertBucket
-//
-//        val convertedValue = getConvertResult()
-//        val convertedValueText = getValueText(convertedValue)
-//
-//        updateViewState(
-//            _bucketViewState.value?.copy(
-//                convertedValueText = convertedValueText,
-//                sourceUnitNameResID = sourceUnitNameResId,
-//                targetUnitNameResID = targetUnitNameResId)
-//        )
-//    }
 
     fun setConvertBucket(convertBucket: ConvertBucket) {
         this.convertBucket = convertBucket
@@ -72,10 +76,6 @@ class ConvertBucketViewModel {
         _bucketViewState.value = newViewState
     }
 }
-
-//data class ConvertBucketViewState(var sourceUnitNameResID:Int = R.string.empty,
-//                                  var convertedValueText: String = "",
-//                                  var targetUnitNameResID: Int = R.string.empty)
 
 data class ConvertBucketViewState(var sourceUnitName: String = "",
                                   var convertedValueText: String = "",

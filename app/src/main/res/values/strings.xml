@@ -5,6 +5,7 @@
     <string name="toggle_text_EU">EU</string>
     <string name="toggle_text_US">US</string>
     <string name="guide_text">Enter any number in the field above to kick-start a conversion</string>
+    <string name="copied_to_clipboard">Value copied to clipboard!</string>
     <string name="empty" />
     <string name="celsius">Celsius</string>
     <string name="fahrenheits">Fahrenheits</string>
