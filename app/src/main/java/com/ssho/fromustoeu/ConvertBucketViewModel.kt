@@ -24,11 +24,10 @@ class ConvertBucketViewModel {
             if (bucketViewState.value == null)
                 return false
 
+            val convertedValueText = bucketViewState.value!!.convertedValueText
             val context = itemView.context
-            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("simple text", bucketViewState.value?.convertedValueText)
-            clipboard.setPrimaryClip(clip)
-            Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_LONG).show()
+            copyTextToSystemClipboard(context, convertedValueText)
+            showLongToast(context, R.string.copied_to_clipboard)
 
             return true
         }
@@ -56,7 +55,7 @@ class ConvertBucketViewModel {
         return if (floor(convertedValue) == convertedValue)
             convertedValue.toInt().toString()
         else
-            String.format("%.2f", round(convertedValue * 100) / 100)
+            String.format("%.2f", round(convertedValue * 100) / 100).replace(',', '.')
     }
 
     private fun getConvertResult(): Double {

@@ -6,6 +6,7 @@
     <string name="toggle_text_US">US</string>
     <string name="guide_text">Enter any number in the field above to kick-start a conversion</string>
     <string name="copied_to_clipboard">Value copied to clipboard!</string>
+    <string name="no_default_application_found">No default application installed on your device to perform this action.</string>
     <string name="empty" />
     <string name="celsius">Celsius</string>
     <string name="fahrenheits">Fahrenheits</string>
@@ -23,5 +24,9 @@
     <string name="ounces">Ounces</string>
     <string name="litres">Litres</string>
     <string name="gallons">US Gallons</string>
+    <string name="menu_tab_calculator">Calculator</string>
+    <string name="menu_tab_home">Home</string>
+    <string name="menu_tab_currency">Currency</string>
+    <string name="tab_under_construction_text">Sorry. This tab is currently under construction</string>
 
 </resources>

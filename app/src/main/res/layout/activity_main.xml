@@ -31,7 +31,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <EditText
             android:id="@+id/value_edit_text"
             onFocusChangedListener="@{viewModel.onFocusChangedListener}"
@@ -54,8 +53,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:textChangedListener="@{viewModel.valueWatcher}" />
 
-
-
         <ToggleButton
             android:id="@+id/toggleButton"
             android:layout_width="wrap_content"
@@ -63,7 +60,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
-            android:onClick="@{(view) -> viewModel.onRegionClicked(view)}"
+            android:onClick="@{() -> viewModel.onRegionClicked()}"
             android:textOn="@string/toggle_text_EU"
             android:textOff="@string/toggle_text_US"
             android:textSize="24sp"
@@ -75,20 +72,22 @@
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/value_edit_text" />
-<!--            app:layout_constraintBottom_toTopOf="@+id/bottom_toolbar"-->
 
-<!--        <androidx.appcompat.widget.Toolbar-->
-<!--            android:id="@+id/bottom_toolbar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="?attr/actionBarSize"-->
-<!--            android:background="?attr/colorOnSecondary"-->
-<!--            android:elevation="4dp"-->
-<!--            android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent" />-->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            selectItemByCurrentTab="@{viewModel.mainViewStateLiveData.component3()}"
+            onNavigationItemSelectedListener="@{viewModel.onNavigationItemSelectedListener}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_navigation_menu" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

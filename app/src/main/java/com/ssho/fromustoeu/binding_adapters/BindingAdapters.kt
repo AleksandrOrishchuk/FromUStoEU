@@ -7,8 +7,11 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import androidx.databinding.adapters.AbsListViewBindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.ssho.fromustoeu.R
+import com.ssho.fromustoeu.TAB_CURRENCY
+import com.ssho.fromustoeu.TAB_HOME
 
 @BindingAdapter("textChangedListener")
 fun bindTextWatcher(editText: EditText, textWatcher: TextWatcher) {
@@ -33,6 +36,21 @@ fun bindOnScrollChangeListener(recyclerView: RecyclerView, onScrollListener: Rec
 @BindingAdapter("onLongClickListener")
 fun bindOnLongClickListener(view: View, onLongClickListener: View.OnLongClickListener) {
     view.setOnLongClickListener(onLongClickListener)
+}
+
+@BindingAdapter("onNavigationItemSelectedListener")
+fun bindOnNavigationItemSelectedListener(navigationView: BottomNavigationView, l: BottomNavigationView.OnNavigationItemSelectedListener) {
+    navigationView.setOnNavigationItemSelectedListener(l)
+}
+
+@BindingAdapter("selectItemByCurrentTab")
+fun bindItemIdfFromCurrentTab(navigationView: BottomNavigationView, currentAppTab: String) {
+    navigationView.selectedItemId = when (currentAppTab) {
+        TAB_HOME -> R.id.tab_home
+        TAB_CURRENCY -> R.id.tab_currency
+
+        else -> R.id.tab_home
+    }
 }
 
 @BindingAdapter("setTextFromStringResourceName")
