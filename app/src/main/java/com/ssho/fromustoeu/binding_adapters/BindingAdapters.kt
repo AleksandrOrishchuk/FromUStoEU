@@ -18,11 +18,6 @@ fun bindTextWatcher(editText: EditText, textWatcher: TextWatcher) {
     editText.addTextChangedListener(textWatcher)
 }
 
-@BindingAdapter("spinnerListener")
-fun bindOnItemSelectedListener(spinner: Spinner, onItemSelectedListener: AdapterView.OnItemSelectedListener) {
-    spinner.onItemSelectedListener = onItemSelectedListener
-}
-
 @BindingAdapter("onFocusChangedListener")
 fun bindOnFocusChangedListener(editText: EditText, onFocusChangeListener: View.OnFocusChangeListener) {
     editText.onFocusChangeListener = onFocusChangeListener

@@ -11,7 +11,7 @@ class Converters {
                     "feet" -> toFeet(it)
                     "square_meters" -> toSqMeters(it)
                     "square_feet" -> toSqFeet(it)
-                    "kilometers_per_hour" -> toKMPH(it)
+                    "kilometers_per_hour" -> toKPH(it)
                     "miles_per_hour" -> toMPH(it)
                     "kilograms" -> toKilograms(it)
                     "pounds" -> toPounds(it)
@@ -60,7 +60,7 @@ class Converters {
             return input / 2.205
         }
 
-        private fun toKMPH(input: Double): Double {
+        private fun toKPH(input: Double): Double {
             return input * 1.609
         }
 

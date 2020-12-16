@@ -35,10 +35,14 @@ fun resolveActivityFor(context: Context, intent: Intent): ResolveInfo? {
 
 fun getIntentBasedOnAppName(context: Context, nameContains: String): Intent? {
     val packageManager = context.packageManager
-    val packages = packageManager.getInstalledPackages(0)
-    packages.forEach {
-        if (it.packageName.toString().toLowerCase(Locale.ROOT).contains(nameContains))
-            return packageManager.getLaunchIntentForPackage(it.packageName)
+    val startupIntent = Intent(Intent.ACTION_MAIN).apply {
+        addCategory(Intent.CATEGORY_LAUNCHER)
+    }
+
+    val activities = packageManager.queryIntentActivities(startupIntent, 0)
+    activities.forEach {
+        if (it.activityInfo.packageName.toLowerCase(Locale.ROOT).contains(nameContains))
+            return packageManager.getLaunchIntentForPackage(it.activityInfo.packageName)
     }
     return null
 }

@@ -43,7 +43,7 @@
             android:autofillHints="@string/edit_number_hint"
             android:ems="2"
             android:hint="@string/edit_number_hint"
-            android:inputType="numberDecimal"
+            android:inputType="numberDecimal|numberSigned"
             android:text="@{viewModel.mainViewStateLiveData.component1()}"
             android:textAlignment="center"
             android:textSize="36sp"
