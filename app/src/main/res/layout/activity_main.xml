@@ -33,7 +33,6 @@
 
         <EditText
             android:id="@+id/value_edit_text"
-            onFocusChangedListener="@{viewModel.onFocusChangedListener}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -44,6 +43,7 @@
             android:ems="2"
             android:hint="@string/edit_number_hint"
             android:inputType="numberDecimal|numberSigned"
+            android:maxLength="6"
             android:text="@{viewModel.mainViewStateLiveData.component1()}"
             android:textAlignment="center"
             android:textSize="36sp"
@@ -51,7 +51,8 @@
             app:layout_constraintEnd_toStartOf="@+id/toggleButton"
             app:layout_constraintStart_toEndOf="@+id/convert_title"
             app:layout_constraintTop_toTopOf="parent"
-            app:textChangedListener="@{viewModel.valueWatcher}" />
+            app:onFocusChangeListener="@{viewModel.onFocusChangeListener}"
+            textChangedListener="@{viewModel.valueWatcher}" />
 
         <ToggleButton
             android:id="@+id/toggleButton"
@@ -83,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             selectItemByCurrentTab="@{viewModel.mainViewStateLiveData.component3()}"
-            onNavigationItemSelectedListener="@{viewModel.onNavigationItemSelectedListener}"
+            app:onNavigationItemSelectedListener="@{viewModel.onNavigationItemSelectedListener}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -67,7 +67,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    val onFocusChangedListener = View.OnFocusChangeListener { _, hasFocus -> _isSoftKeyboardFocused.value = hasFocus }
+    val onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus -> _isSoftKeyboardFocused.value = hasFocus }
 
     val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         if (item.itemId == R.id.tab_calculator) {

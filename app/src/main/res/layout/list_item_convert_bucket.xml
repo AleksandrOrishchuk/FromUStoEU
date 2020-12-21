@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/layout_stroke_convert_bucket"
         android:layout_margin="8dp"
-        onLongClickListener="@{viewModel.onLongClickListener}">
+        app:onLongClickListener="@{viewModel.onLongClickListener}">
 
         <TextView
             android:id="@+id/source_unit_name_textView"

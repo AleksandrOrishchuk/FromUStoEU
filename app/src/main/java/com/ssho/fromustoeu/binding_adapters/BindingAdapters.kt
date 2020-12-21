@@ -1,10 +1,7 @@
 package com.ssho.fromustoeu.binding_adapters
 
 import android.text.TextWatcher
-import android.view.View
-import android.widget.AdapterView
 import android.widget.EditText
-import android.widget.Spinner
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -18,24 +15,9 @@ fun bindTextWatcher(editText: EditText, textWatcher: TextWatcher) {
     editText.addTextChangedListener(textWatcher)
 }
 
-@BindingAdapter("onFocusChangedListener")
-fun bindOnFocusChangedListener(editText: EditText, onFocusChangeListener: View.OnFocusChangeListener) {
-    editText.onFocusChangeListener = onFocusChangeListener
-}
-
 @BindingAdapter("onScrollListener")
 fun bindOnScrollChangeListener(recyclerView: RecyclerView, onScrollListener: RecyclerView.OnScrollListener) {
     recyclerView.addOnScrollListener(onScrollListener)
-}
-
-@BindingAdapter("onLongClickListener")
-fun bindOnLongClickListener(view: View, onLongClickListener: View.OnLongClickListener) {
-    view.setOnLongClickListener(onLongClickListener)
-}
-
-@BindingAdapter("onNavigationItemSelectedListener")
-fun bindOnNavigationItemSelectedListener(navigationView: BottomNavigationView, l: BottomNavigationView.OnNavigationItemSelectedListener) {
-    navigationView.setOnNavigationItemSelectedListener(l)
 }
 
 @BindingAdapter("selectItemByCurrentTab")
