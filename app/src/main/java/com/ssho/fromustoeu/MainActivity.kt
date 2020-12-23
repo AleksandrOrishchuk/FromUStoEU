@@ -1,10 +1,10 @@
 package com.ssho.fromustoeu
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.ssho.fromustoeu.databinding.ActivityMainBinding
@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
                     isValueProvided && appTab == TAB_CURRENCY -> CurrencyListFragment.newInstance(mainViewState)
                     else -> NoValueFragment.newInstance()
                 }
+                //todo вынести в центральный класс навигатор
                 supportFragmentManager
                         .beginTransaction()
                         .replace(R.id.fragment_container, fragment)

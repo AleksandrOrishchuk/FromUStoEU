@@ -14,6 +14,7 @@ class CurrencyListFragment : Fragment() {
         private const val ARG_PARENT_STATE = "parent_view_state"
 
         fun newInstance(parentViewState: MainViewState): CurrencyListFragment {
+            //todo можно подсократить этот код, а то тут и объявление типа, и отдельная переменная
             val argsBundle: Bundle = Bundle().apply {
                 putSerializable(ARG_PARENT_STATE, parentViewState)
             }

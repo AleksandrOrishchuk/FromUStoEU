@@ -26,13 +26,18 @@ class MainViewModel : ViewModel() {
     private val _calculatorIntentLiveData: MutableLiveData<Intent> = MutableLiveData()
 
     val valueWatcher = object : TextWatcher {
-        override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+        override fun onTextChanged(
+            charSequence: CharSequence?,
+            start: Int,
+            before: Int,
+            count: Int
+        ) {
             if (charSequence == null || charSequence.isEmpty()) {
                 updateViewState(
-                        _mainViewStateLiveData.value?.copy(
-                                currentValueText = "",
-                                isValueProvided = false
-                        )
+                    _mainViewStateLiveData.value?.copy(
+                        currentValueText = "",
+                        isValueProvided = false
+                    )
                 )
                 return
             }
@@ -45,10 +50,10 @@ class MainViewModel : ViewModel() {
                 val newValue = newValueText.toDouble()
 
                 updateViewState(
-                        _mainViewStateLiveData.value?.copy(
-                                currentValueText = newValueText,
-                                isValueProvided = true
-                        )
+                    _mainViewStateLiveData.value?.copy(
+                        currentValueText = newValueText,
+                        isValueProvided = true
+                    )
                 )
 
                 Log.d(TAG, "Value received from TextEdit: $newValue + string_$newValueText")
@@ -67,31 +72,36 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    val onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus -> _isSoftKeyboardFocused.value = hasFocus }
+    val onFocusChangeListener =
+        View.OnFocusChangeListener { _, hasFocus -> _isSoftKeyboardFocused.value = hasFocus }
 
-    val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        if (item.itemId == R.id.tab_calculator) {
-            val calcIntent = Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_CALCULATOR).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    val onNavigationItemSelectedListener =
+        BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            if (item.itemId == R.id.tab_calculator) {
+                val calcIntent = Intent.makeMainSelectorActivity(
+                    Intent.ACTION_MAIN,
+                    Intent.CATEGORY_APP_CALCULATOR
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                _calculatorIntentLiveData.value = calcIntent
+
+                return@OnNavigationItemSelectedListener false
             }
-            _calculatorIntentLiveData.value = calcIntent
 
-            return@OnNavigationItemSelectedListener false
+            val newAppTab = when (item.itemId) {
+                R.id.tab_currency -> TAB_CURRENCY
+                else -> TAB_HOME
+            }
+            val currentAppTab = mainViewStateLiveData.value?.appTab
+
+            if (newAppTab != currentAppTab) {
+                updateViewState(_mainViewStateLiveData.value?.copy(appTab = newAppTab))
+                Log.i(TAG, "Menu item selected: $newAppTab")
+                true
+            } else
+                false
         }
-
-        val newAppTab = when (item.itemId) {
-            R.id.tab_currency -> TAB_CURRENCY
-            else -> TAB_HOME
-        }
-        val currentAppTab = mainViewStateLiveData.value?.appTab
-
-        if (newAppTab != currentAppTab) {
-            updateViewState(_mainViewStateLiveData.value?.copy(appTab = newAppTab))
-            Log.i(TAG, "Menu item selected: $newAppTab")
-            true
-        } else
-            false
-    }
 
     init {
         setInitialState()
@@ -99,24 +109,19 @@ class MainViewModel : ViewModel() {
     }
 
     fun onRegionClicked() {
-        val regionFrom =
-                if (mainViewStateLiveData.value?.measureSystemFrom == FROM_IMPERIAL_US)
-                    FROM_METRIC_EU
-                else
-                    FROM_IMPERIAL_US
+        val regionFrom = if (mainViewStateLiveData.value?.measureSystemFrom == FROM_IMPERIAL_US)
+            FROM_METRIC_EU
+        else
+            FROM_IMPERIAL_US
 
         updateViewState(
-                _mainViewStateLiveData.value?.copy(
-                        measureSystemFrom = regionFrom
-                )
+            _mainViewStateLiveData.value?.copy(measureSystemFrom = regionFrom)
         )
     }
-
 
     private fun updateViewState(newMainViewState: MainViewState?) {
         _mainViewStateLiveData.value = newMainViewState
     }
-
 
     private fun setInitialState() {
         var initialValueText = ""
@@ -125,11 +130,12 @@ class MainViewModel : ViewModel() {
             initialValueText = INITIAL_VALUE.toString()
 
         updateViewState(
-                MainViewState(
-                        initialValueText,
-                        INITIAL_SYSTEM_FROM,
-                        INITIAL_APP_TAB,
-                        INITIAL_IS_VALUE_PROVIDED)
+            MainViewState(
+                initialValueText,
+                INITIAL_SYSTEM_FROM,
+                INITIAL_APP_TAB,
+                INITIAL_IS_VALUE_PROVIDED
+            )
         )
     }
 }

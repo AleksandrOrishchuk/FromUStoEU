@@ -34,8 +34,8 @@ class ConvertBucketListFragment : Fragment() {
 
     private val fragmentViewModel: CBListFragmentViewModel by lazy {
         ViewModelProvider(
-                this,
-                CBListFragmentViewModelFactory(parentViewState)
+            this,
+            CBListFragmentViewModelFactory(parentViewState)
         ).get(CBListFragmentViewModel::class.java)
     }
 
@@ -54,10 +54,10 @@ class ConvertBucketListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         fragmentBinding = DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_convert_bucket_list,
-                container,
-                false
+            inflater,
+            R.layout.fragment_convert_bucket_list,
+            container,
+            false
         )
         fragmentBinding.lifecycleOwner = viewLifecycleOwner
         fragmentBinding.viewModel = fragmentViewModel
@@ -76,7 +76,10 @@ class ConvertBucketListFragment : Fragment() {
                     adapter = ConvertBucketAdapter(convertBuckets)
                     layoutManager = GridLayoutManager(context, 2)
 
-                    Log.d(TAG, "Recycler view List received. List size: ${convertBuckets.size} items")
+                    Log.d(
+                        TAG,
+                        "Recycler view List received. List size: ${convertBuckets.size} items"
+                    )
                 }
             }
         }
@@ -93,25 +96,35 @@ class ConvertBucketListFragment : Fragment() {
     }
 
 
-    private inner class ConvertBucketHolder(private val bucketBinding: ListItemConvertBucketBinding)
-        : RecyclerView.ViewHolder(bucketBinding.root) {
+    private inner class ConvertBucketHolder(
+        private val bucketBinding: ListItemConvertBucketBinding
+    ) : RecyclerView.ViewHolder(bucketBinding.root) {
 
         fun bind(convertBucket: ConvertBucket) {
+            //todo с этими апплаями лучше не перебарщивать, здесь можно без него просто написать:
+            // bucketBinding.viewModel?.setConvertBucket(convertBucket)
+            // каждый апплай – это накладной расход. Размер приложения из-за них увеличивается!
+            // Понятно, что на микроскопическое значение, но, когда такого много, со временем эффект
+            // может ощутиться.
             bucketBinding.viewModel?.apply {
                 setConvertBucket(convertBucket)
             }
         }
     }
 
-
-    private inner class ConvertBucketAdapter(private val convertBuckets: List<ConvertBucket>)
-        : RecyclerView.Adapter<ConvertBucketHolder>() {
+    //todo можно заюзать ListAdapter, он вроде поудобнее.
+    // Список айтемов в конструктор передавать плохо, потому что при любых изменениях тебе
+    // приходится пересоздавать адаптер. Вместо этого надо делать сеттер и вызывать метод
+    // notifyDataSetChanged, а адаптер создавать единожды.
+    private inner class ConvertBucketAdapter(
+        private val convertBuckets: List<ConvertBucket>
+    ) : RecyclerView.Adapter<ConvertBucketHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConvertBucketHolder {
             val bucketBinding = ListItemConvertBucketBinding.inflate(
-                    LayoutInflater.from(requireContext()),
-                    parent,
-                    false
+                LayoutInflater.from(requireContext()),
+                parent,
+                false
             )
             bucketBinding.viewModel = ConvertBucketViewModel()
             bucketBinding.lifecycleOwner = viewLifecycleOwner

@@ -1,5 +1,6 @@
 package com.ssho.fromustoeu.converters
 
+// todo лучше сделать простым классом и создавать его инстанс просто один раз. Это в тему DI.
 class Converters {
     companion object {
         fun convert(value: Double, convertTargetName: String): Double {

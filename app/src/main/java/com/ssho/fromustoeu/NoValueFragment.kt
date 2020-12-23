@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.ssho.fromustoeu.databinding.FragmentNoValueBinding
 
+//todo этот фрагмент можно вообще без байндинга сделать =)
 class NoValueFragment : Fragment() {
     companion object {
         fun newInstance(): NoValueFragment {
@@ -15,18 +16,18 @@ class NoValueFragment : Fragment() {
         }
     }
 
-    private lateinit var fragmentBinding : FragmentNoValueBinding
+    private lateinit var fragmentBinding: FragmentNoValueBinding
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         fragmentBinding = DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_no_value,
-                container,
-                false
+            inflater,
+            R.layout.fragment_no_value,
+            container,
+            false
         )
         fragmentBinding.lifecycleOwner = viewLifecycleOwner
 
