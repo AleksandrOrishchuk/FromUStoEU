@@ -8,7 +8,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.ssho.fromustoeu.databinding.FragmentNoValueBinding
 
-//todo этот фрагмент можно вообще без байндинга сделать =)
 class NoValueFragment : Fragment() {
     companion object {
         fun newInstance(): NoValueFragment {

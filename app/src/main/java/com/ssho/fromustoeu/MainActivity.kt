@@ -3,18 +3,18 @@ package com.ssho.fromustoeu
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.ssho.fromustoeu.databinding.ActivityMainBinding
+import com.ssho.fromustoeu.dependency_injection.provideMainViewModelFactory
 
 private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java)
+        ViewModelProvider(this, provideMainViewModelFactory()).get(MainViewModel::class.java)
     }
 
     private lateinit var mainBinding: ActivityMainBinding
@@ -33,15 +33,15 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.mainViewStateLiveData.observe(this) { mainViewState ->
             mainViewState.apply {
                 val fragment = when {
-                    isValueProvided && appTab == TAB_HOME -> ConvertBucketListFragment.newInstance(mainViewState)
-                    isValueProvided && appTab == TAB_CURRENCY -> CurrencyListFragment.newInstance(mainViewState)
+                    isValueProvided -> ConvertBucketListFragment.newInstance(mainViewState)
                     else -> NoValueFragment.newInstance()
                 }
-                //todo вынести в центральный класс навигатор
+                //вынести в центральный класс навигатор
                 supportFragmentManager
                         .beginTransaction()
                         .replace(R.id.fragment_container, fragment)
                         .commit()
+                Log.d(TAG, "Fragment replaced")
             }
         }
 
@@ -55,17 +55,8 @@ class MainActivity : AppCompatActivity() {
                 if (possibleIntent != null)
                     startActivity(possibleIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 else
-                    Toast.makeText(this,
-                            R.string.no_default_application_found,
-                            Toast.LENGTH_LONG
-                    ).show()
+                    showLongToast(this, R.string.no_default_application_found)
             }
         }
-
-        mainViewModel.isSoftKeyboardFocused.observe(this) { hasFocus ->
-            if (!hasFocus)
-                closeSoftKeyboard(this, mainBinding.valueEditText)
-        }
     }
-
 }

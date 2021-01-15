@@ -1,65 +1,53 @@
 package com.ssho.fromustoeu
 
 import android.util.Log
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.ssho.fromustoeu.converters.Converters
-import kotlin.math.abs
+import com.ssho.fromustoeu.converters.Converter
 import kotlin.math.floor
 import kotlin.math.round
 
 private const val TAG = "ConvertBucket"
 
-class ConvertBucketViewModel {
+class ConvertBucketViewModel(private val converter: Converter) {
     val bucketViewState: LiveData<ConvertBucketViewState> get() = _bucketViewState
+    private val _bucketViewState = MutableLiveData(ConvertBucketViewState())
 
-    //todo не принципиально, но можно в некоторых местах не объявлять типы, тоже немного код
-    // нагромождает))
-    private val _bucketViewState: MutableLiveData<ConvertBucketViewState> = MutableLiveData()
+    fun setConvertBucketAndUpdateViewState(convertBucket: ConvertBucket) {
+        val convertBucketViewState: ConvertBucketViewState = when (convertBucket) {
+            is MeasureBucket -> {
+                val sourceUnitName = convertBucket.sourceUnitName
+                val targetUnitName = convertBucket.targetUnitName
+                val sourceValue = convertBucket.sourceValueText.toDouble()
 
-    private lateinit var convertBucket: ConvertBucket
+                val convertedValue = converter.convert(sourceValue, targetUnitName)
 
-    //todo мне вот как раз не нравится эта архитектура тем, что она нарушает слои ответственности((
-    // по идее, вьюмодель не должна ничего знать о вью, а тут бац, КликЛистенер висит..
-    val onLongClickListener = object : View.OnLongClickListener {
-        override fun onLongClick(itemView: View): Boolean {
-            if (bucketViewState.value == null)
-                return false
+                val convertedValueText = getValueText(convertedValue)
+                Log.i(TAG, "Got converted value to $targetUnitName = $convertedValue")
 
-            //todo оператор (!!) лучше вообще не использовать.
-            // Можно просто в конце дописать orEmpty(). В случае непредвиденного лучше пусть будет
-            // пустая строка, чем креш)
-            // val convertedValueText = bucketViewState.value?.convertedValueText.orEmpty()
-            val convertedValueText = bucketViewState.value!!.convertedValueText
-            val context = itemView.context
-            copyTextToSystemClipboard(context, convertedValueText)
-            showLongToast(context, R.string.copied_to_clipboard)
+                ConvertBucketViewState(sourceUnitName, convertedValueText, targetUnitName)
+            }
+            is CurrencyBucket -> {
+                val sourceCurrencyName = convertBucket.sourceCurrencyName
+                val targetCurrencyName = convertBucket.targetCurrencyName
+                val sourceValue = convertBucket.sourceValueText.toDouble()
 
-            return true
+                converter.setExtras(sourceCurrencyName)
+                val convertedValue = converter.convert(sourceValue, targetCurrencyName)
+
+                val convertedValueText = getValueText(convertedValue)
+                Log.i(TAG, "Got converted value to $targetCurrencyName = $convertedValue")
+
+                ConvertBucketViewState(sourceCurrencyName, convertedValueText, targetCurrencyName)
+            }
+            else -> ConvertBucketViewState()
         }
+
+        updateViewState(convertBucketViewState)
     }
 
-    //todo по кодстайлу лучше в самый верх поднимать инит, должна быть четкая структура
-    // кода внутри класса
-    init {
-        _bucketViewState.value = ConvertBucketViewState()
-    }
-
-    // todo можно название сделать более говорящим, например, setConvertBucketAndUpdateViewState
-    fun setConvertBucket(convertBucket: ConvertBucket) {
-        this.convertBucket = convertBucket
-
-        val convertedValue = getConvertResult()
-        val convertedValueText = getValueText(convertedValue)
-
-        updateViewState(
-            _bucketViewState.value?.copy(
-                convertedValueText = convertedValueText,
-                sourceUnitName = convertBucket.sourceUnitName,
-                targetUnitName = convertBucket.targetUnitName
-            )
-        )
+    private fun updateViewState(newViewState: ConvertBucketViewState?) {
+        _bucketViewState.value = newViewState
     }
 
     private fun getValueText(convertedValue: Double): String {
@@ -69,34 +57,10 @@ class ConvertBucketViewModel {
             String.format("%.2f", round(convertedValue * 100) / 100)
                 .replace(',', '.')
     }
-
-    private fun getConvertResult(): Double {
-        var inputValue = convertBucket.sourceValueText.toDouble()
-        val targetUnitName: String = convertBucket.targetUnitName
-
-        //todo по-моему, вот это сравнение работать не будет, т.к. в названии единиц измерений
-        // у тебя пишется с большой буквы: Celsius. Чтобы сработало,
-        // надо сравнивать строки через метод equals, передавая параметр ignoreCase = true.
-        // А вообще это надо вынести в константы и не писать тут руками названия юнитов,
-        // а брать их из того же источника, где ты определил для UI.
-        // Ну и еще если ты сделаешь интернационализацию, это тоже работать не будет))))))))))
-        if (targetUnitName != "celsius" && targetUnitName != "fahrenheits")
-            inputValue = abs(inputValue)
-
-        val result = Converters.convert(inputValue, targetUnitName)
-        Log.i(TAG, "Got converted value to $targetUnitName = $result")
-
-        return result
-    }
-
-    private fun updateViewState(newViewState: ConvertBucketViewState?) {
-        _bucketViewState.value = newViewState
-    }
 }
 
-//todo должны быть val вместо var
 data class ConvertBucketViewState(
-    var sourceUnitName: String = "",
-    var convertedValueText: String = "",
-    var targetUnitName: String = ""
+    val sourceUnitName: String = "",
+    val convertedValueText: String = "",
+    val targetUnitName: String = ""
 )

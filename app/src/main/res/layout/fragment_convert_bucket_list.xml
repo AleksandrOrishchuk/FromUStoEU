@@ -12,8 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Spinner
-            android:id="@+id/source_measure_units_spinner"
+        <TextView
+            android:id="@+id/rates_valid_for_date_textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"/>
@@ -22,7 +22,8 @@
             android:id="@+id/convert_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            onScrollListener="@{viewModel.onScrollListener}"/>
+            submitConvertBucketList="@{viewModel.fragmentViewState.component1()}"
+            closeKeyboardOnScroll="@{true}"/>
 
     </LinearLayout>
 

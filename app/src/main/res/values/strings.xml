@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">From US to EU</string>
-    <string name="edit_number_hint">55.5</string>
+    <string name="app_name" translatable="false">From US to EU</string>
+    <string name="edit_number_hint" translatable="false">55.5</string>
     <string name="convert_title_text">Number:</string>
-    <string name="toggle_text_EU">EU</string>
-    <string name="toggle_text_US">US</string>
+    <string name="toggle_text_EU">EURO</string>
+    <string name="toggle_text_US">USA</string>
     <string name="guide_text">Enter any number in the field above to kick-start a conversion</string>
     <string name="copied_to_clipboard">Value copied to clipboard!</string>
     <string name="no_default_application_found">No default application installed on your device to perform this action.</string>
-    <string name="empty" />
+    <string name="empty" translatable="false" />
     <string name="celsius">Celsius</string>
     <string name="fahrenheits">Fahrenheits</string>
     <string name="kilometers_per_hour">Kilometers per hour</string>
@@ -21,12 +21,21 @@
     <string name="kilograms">Kilograms</string>
     <string name="pounds">Pounds</string>
     <string name="grams">Grams</string>
-    <string name="ounces">Ounces</string>
+    <string name="ounces">Ounces (oz)</string>
     <string name="litres">Litres</string>
     <string name="gallons">US Gallons</string>
     <string name="menu_tab_calculator">Calculator</string>
     <string name="menu_tab_home">Home</string>
     <string name="menu_tab_currency">Currency</string>
-    <string name="tab_under_construction_text">Sorry. This tab is currently under construction</string>
+    <string name="tab_under_development_text">Sorry. This tab is currently under development</string>
+    <string name="usd" translatable="false">USD</string>
+    <string name="eur" translatable="false">EUR</string>
+    <string name="sek" translatable="false">SEK</string>
+    <string name="nok" translatable="false">NOK</string>
+    <string name="rub" translatable="false">RUB</string>
+    <string name="gbp" translatable="false">GBP</string>
+    <string name="cad" translatable="false">CAD</string>
+    <string name="aud" translatable="false">AUD</string>
+    <string name="chf" translatable="false">CHF</string>
 
 </resources>

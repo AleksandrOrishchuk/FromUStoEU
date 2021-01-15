@@ -51,8 +51,9 @@
             app:layout_constraintEnd_toStartOf="@+id/toggleButton"
             app:layout_constraintStart_toEndOf="@+id/convert_title"
             app:layout_constraintTop_toTopOf="parent"
-            app:onFocusChangeListener="@{viewModel.onFocusChangeListener}"
+            closeKeyboardOnFocusChanged="@{true}"
             textChangedListener="@{viewModel.valueWatcher}" />
+<!--            app:onFocusChangeListener="@{viewModel.onFocusChangeListener}"-->
 
         <ToggleButton
             android:id="@+id/toggleButton"

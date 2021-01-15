@@ -8,10 +8,17 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ssho.fromustoeu.converters.Converter
+import com.ssho.fromustoeu.converters.CurrencyConverter
+import com.ssho.fromustoeu.converters.MeasureConverter
 import com.ssho.fromustoeu.databinding.FragmentConvertBucketListBinding
 import com.ssho.fromustoeu.databinding.ListItemConvertBucketBinding
+import com.ssho.fromustoeu.dependency_injection.currencyConverter
+import com.ssho.fromustoeu.dependency_injection.measureConverter
 
 private const val TAG = "ConvertListFragment"
 
@@ -21,16 +28,14 @@ class ConvertBucketListFragment : Fragment() {
         private const val ARG_PARENT_STATE = "parent_view_state"
 
         fun newInstance(parentViewState: MainViewState): ConvertBucketListFragment {
-            val argsBundle: Bundle = Bundle().apply {
-                putSerializable(ARG_PARENT_STATE, parentViewState)
-            }
 
             return ConvertBucketListFragment().apply {
-                arguments = argsBundle
+                arguments = Bundle().apply {
+                    putSerializable(ARG_PARENT_STATE, parentViewState)
+                }
             }
         }
     }
-
 
     private val fragmentViewModel: CBListFragmentViewModel by lazy {
         ViewModelProvider(
@@ -59,66 +64,59 @@ class ConvertBucketListFragment : Fragment() {
             container,
             false
         )
-        fragmentBinding.lifecycleOwner = viewLifecycleOwner
-        fragmentBinding.viewModel = fragmentViewModel
+        fragmentBinding.apply {
+            lifecycleOwner = viewLifecycleOwner
+            viewModel = fragmentViewModel
+
+            convertRecyclerView.layoutManager = GridLayoutManager(context, 2)
+            convertRecyclerView.adapter = ConvertBucketAdapter(measureConverter, currencyConverter)
+        }
 
         return fragmentBinding.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        fragmentViewModel.fragmentViewState.observe(viewLifecycleOwner) { viewState ->
-            fragmentBinding.apply {
-
-                convertRecyclerView.apply {
-                    val convertBuckets = viewState.convertBucketsForRecycler
-                    adapter = ConvertBucketAdapter(convertBuckets)
-                    layoutManager = GridLayoutManager(context, 2)
-
-                    Log.d(
-                        TAG,
-                        "Recycler view List received. List size: ${convertBuckets.size} items"
-                    )
-                }
-            }
-        }
-
-        fragmentViewModel.isRecyclerViewScrolling.observe(viewLifecycleOwner) { isScrolling ->
-            if (isScrolling)
-                closeSoftKeyboard(requireContext(), fragmentBinding.convertRecyclerView)
-        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         fragmentBinding.convertRecyclerView.clearOnScrollListeners()
+        Log.d(TAG, "Scroll listeners cleared")
     }
 
 
-    private inner class ConvertBucketHolder(
+    internal inner class ConvertBucketHolder(
         private val bucketBinding: ListItemConvertBucketBinding
     ) : RecyclerView.ViewHolder(bucketBinding.root) {
 
         fun bind(convertBucket: ConvertBucket) {
-            //todo с этими апплаями лучше не перебарщивать, здесь можно без него просто написать:
-            // bucketBinding.viewModel?.setConvertBucket(convertBucket)
-            // каждый апплай – это накладной расход. Размер приложения из-за них увеличивается!
-            // Понятно, что на микроскопическое значение, но, когда такого много, со временем эффект
-            // может ощутиться.
-            bucketBinding.viewModel?.apply {
-                setConvertBucket(convertBucket)
-            }
+            bucketBinding.viewModel?.setConvertBucketAndUpdateViewState(convertBucket)
         }
     }
 
-    //todo можно заюзать ListAdapter, он вроде поудобнее.
+    //можно заюзать ListAdapter, он вроде поудобнее.
     // Список айтемов в конструктор передавать плохо, потому что при любых изменениях тебе
     // приходится пересоздавать адаптер. Вместо этого надо делать сеттер и вызывать метод
     // notifyDataSetChanged, а адаптер создавать единожды.
-    private inner class ConvertBucketAdapter(
-        private val convertBuckets: List<ConvertBucket>
-    ) : RecyclerView.Adapter<ConvertBucketHolder>() {
+    //DONE
+    internal inner class ConvertBucketAdapter(
+            private val measureConverter: MeasureConverter,
+            private val currencyConverter: CurrencyConverter
+            ) : ListAdapter<ConvertBucket, ConvertBucketHolder>(DiffUtilCallback()) {
+
+        private var converter: Converter = measureConverter
+
+        override fun onCurrentListChanged(previousList: MutableList<ConvertBucket>, currentList: MutableList<ConvertBucket>) {
+            super.onCurrentListChanged(previousList, currentList)
+            Log.d(TAG, "New list submitted, size ${currentList.size}")
+
+            if (currentList.isEmpty())
+                return
+
+            converter = when {
+//                previousList.isNotEmpty() && currentList[0] is CurrencyBucket -> currencyConverter
+//                previousList.isEmpty() && currentList[0] is CurrencyBucket -> currencyConverter
+                currentList[0] is CurrencyBucket -> currencyConverter
+                else -> measureConverter
+            }
+        }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConvertBucketHolder {
             val bucketBinding = ListItemConvertBucketBinding.inflate(
@@ -126,18 +124,27 @@ class ConvertBucketListFragment : Fragment() {
                 parent,
                 false
             )
-            bucketBinding.viewModel = ConvertBucketViewModel()
+            bucketBinding.viewModel = ConvertBucketViewModel(converter)
             bucketBinding.lifecycleOwner = viewLifecycleOwner
 
             return ConvertBucketHolder(bucketBinding)
         }
 
         override fun onBindViewHolder(holder: ConvertBucketHolder, position: Int) {
-            val convertBucket = convertBuckets[position]
+            val convertBucket = getItem(position)
             holder.bind(convertBucket)
         }
 
-        override fun getItemCount(): Int = convertBuckets.size
+        override fun getItemCount(): Int = this.currentList.size
+    }
 
+    private inner class DiffUtilCallback : DiffUtil.ItemCallback<ConvertBucket>() {
+        override fun areItemsTheSame(oldItem: ConvertBucket, newItem: ConvertBucket): Boolean {
+            return false
+        }
+
+        override fun areContentsTheSame(oldItem: ConvertBucket, newItem: ConvertBucket): Boolean {
+            return false
+        }
     }
 }

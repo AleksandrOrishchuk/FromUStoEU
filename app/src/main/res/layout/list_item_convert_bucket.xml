@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/layout_stroke_convert_bucket"
         android:layout_margin="8dp"
-        app:onLongClickListener="@{viewModel.onLongClickListener}">
+        copyToClipboardOnLongClick="@{viewModel.bucketViewState.component2()}">
 
         <TextView
             android:id="@+id/source_unit_name_textView"

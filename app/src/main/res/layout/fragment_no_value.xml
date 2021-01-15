@@ -6,7 +6,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--TODO вот этот стиль текста лучше вынести в ресурсы стилей (R.style), т.к. он два раза используется-->
         <TextView
             android:id="@+id/guide_textView"
             android:layout_width="0dp"

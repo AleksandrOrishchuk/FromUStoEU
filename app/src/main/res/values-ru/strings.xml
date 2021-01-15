@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">From US to EU</string>
+    <string name="edit_number_hint">55.5</string>
+    <string name="convert_title_text">Число:</string>
+    <string name="toggle_text_EU">ЕВРО</string>
+    <string name="toggle_text_US">США</string>
+    <string name="guide_text">Введите любое число в поле выше, чтобы начать конвертацию</string>
+    <string name="copied_to_clipboard">Значение скопировано в буфер обмена!</string>
+    <string name="no_default_application_found">Не найдено ни одного стандартного приложения, чтобы выполнить это действие.</string>
+    <string name="empty" />
+    <string name="celsius">По Цельсию</string>
+    <string name="fahrenheits">По Фаренгейту</string>
+    <string name="kilometers_per_hour">Километров в час</string>
+    <string name="miles_per_hour">Миль в час</string>
+    <string name="meters">Метров</string>
+    <string name="feet">Футов</string>
+    <string name="centimeters">Сантиметров</string>
+    <string name="inches">Дюймов</string>
+    <string name="square_meters">Квадратных метров</string>
+    <string name="square_feet">Квадратных футов</string>
+    <string name="kilograms">Килограм</string>
+    <string name="pounds">Фунтов</string>
+    <string name="grams">Грамм</string>
+    <string name="ounces">Унций</string>
+    <string name="gallons">Амер. галлонов</string>
+    <string name="menu_tab_calculator">Калькулятор</string>
+    <string name="menu_tab_home">Домой</string>
+    <string name="menu_tab_currency">Валюта</string>
+    <string name="tab_under_development_text">Извините, в данный момент эта вкладка находится в разработке</string>
+    <string name="litres">Литров</string>
+
+</resources>

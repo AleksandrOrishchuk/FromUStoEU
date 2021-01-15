@@ -1,54 +1,39 @@
 package com.ssho.fromustoeu
 
+import android.util.Log
 import androidx.lifecycle.*
-import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.launch
-import java.io.Serializable
 
-private const val TAG = "CBListFragment"
+private const val TAG = "CBListFragmentVM"
 
 class CBListFragmentViewModel(private val parentViewState: MainViewState) : ViewModel() {
     val fragmentViewState: LiveData<FragmentViewState> get() = _fragmentViewState
-    val isRecyclerViewScrolling: LiveData<Boolean> get() = _isRecyclerViewScrolling
-    private val _fragmentViewState: MutableLiveData<FragmentViewState> = MutableLiveData()
-    private val _isRecyclerViewScrolling: MutableLiveData<Boolean> = MutableLiveData(false)
-
-    private val convertBucketRepository = ConvertBucketRepository.get()
-
-    //todo использование элементов View-слоя во вью-модели – плохой паттерн.
-    // Лучше это дело выполнить во фрагменте.
-    val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            super.onScrollStateChanged(recyclerView, newState)
-
-            if (newState == RecyclerView.SCROLL_STATE_DRAGGING)
-                _isRecyclerViewScrolling.value = true
-            if (newState == RecyclerView.SCROLL_STATE_IDLE)
-                _isRecyclerViewScrolling.value = false
-        }
-    }
+    private val _fragmentViewState = MutableLiveData(FragmentViewState())
 
     init {
-        setInitialViewState()
+        if (parentViewState.convertBucketList.isNotEmpty())
+            fillBucketsWithValue()
+        Log.d(TAG, "Initialized")
     }
 
-    private fun setInitialViewState() {
-        viewModelScope.launch {
-            val convertBuckets = selectConvertBucketsFromDatabase()
-
-            _fragmentViewState.postValue(
-                FragmentViewState(convertBucketsForRecycler = convertBuckets)
-            )
+    @Suppress("UNCHECKED_CAST")
+    private fun fillBucketsWithValue() {
+        val filledBuckets = mutableListOf<ConvertBucket>()
+        if (parentViewState.appTab == TAB_HOME) {
+            parentViewState.convertBucketList as List<MeasureBucket>
+            parentViewState.convertBucketList.forEach {
+                filledBuckets.add(it.copy(sourceValueText = parentViewState.currentValueText))
+            }
         }
-    }
-
-    private suspend fun selectConvertBucketsFromDatabase(): List<ConvertBucket> {
-        val appTab = parentViewState.appTab
-        val measureSystemFrom = parentViewState.measureSystemFrom
-
-        return convertBucketRepository.getBuckets(appTab, measureSystemFrom).onEach { bucket ->
-            bucket.sourceValueText = parentViewState.currentValueText
+        else {
+            parentViewState.convertBucketList as List<CurrencyBucket>
+            parentViewState.convertBucketList.forEach {
+                filledBuckets.add(it.copy(sourceValueText = parentViewState.currentValueText))
+            }
         }
+
+        _fragmentViewState.postValue(
+                FragmentViewState(convertBucketsForRecycler = filledBuckets)
+        )
     }
 }
 
@@ -61,7 +46,6 @@ class CBListFragmentViewModelFactory(
     }
 }
 
-//todo это точно надо наследовать от Serializable?
 data class FragmentViewState(
-    var convertBucketsForRecycler: List<ConvertBucket> = emptyList()
-) : Serializable
+    val convertBucketsForRecycler: List<ConvertBucket> = emptyList()
+)
