@@ -33,11 +33,11 @@ class ConversionResultListFragment : Fragment() {
         }
     }
 
-    private val fragmentViewModel: CBListFragmentViewModel by lazy {
+    private val fragmentViewModel: CResultListFragmentViewModel by lazy {
         ViewModelProvider(
             this,
-            CBListFragmentViewModelFactory(parentViewState.conversionResultUiList)
-        ).get(CBListFragmentViewModel::class.java)
+            CResultListFragmentViewModelFactory(parentViewState.conversionResultUiList)
+        ).get(CResultListFragmentViewModel::class.java)
     }
 
     private lateinit var fragmentBinding: FragmentConversionResultListBinding
