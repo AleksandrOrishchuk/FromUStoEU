@@ -1,26 +1,18 @@
 package com.ssho.fromustoeu
 
 import android.app.Application
-import com.ssho.fromustoeu.database.MeasureBucketsDatabase
-import com.ssho.fromustoeu.database.ExchangeRatesDatabase
-import com.ssho.fromustoeu.dependency_injection.exchangeRatesApi
+import com.ssho.fromustoeu.data.database.MeasureBucketsDatabase
+import com.ssho.fromustoeu.data.database.ExchangeRatesDatabase
+import com.ssho.fromustoeu.dependency_injection.initializeExchangeRatesRepository
+import com.ssho.fromustoeu.dependency_injection.initializeMeasureBucketsRepository
 
 class FromUsToEUApplication : Application() {
-    private lateinit var measureBucketsDatabase: MeasureBucketsDatabase
-    private lateinit var exchangeRatesDatabase: ExchangeRatesDatabase
 
     override fun onCreate() {
         super.onCreate()
 
-        measureBucketsDatabase = MeasureBucketsDatabase.getMeasureBucketsDatabase(this)
-        MeasureBucketsRepository.initialize(
-            measureBucketsDatabase.convertBucketDao()
-        )
+        initializeMeasureBucketsRepository(this)
+        initializeExchangeRatesRepository(this)
 
-        exchangeRatesDatabase = ExchangeRatesDatabase.getExchangeRatesDatabase(this)
-        ExchangeRatesRepository.initialize(
-                exchangeRatesDatabase.exchangeRatesDao(),
-                exchangeRatesApi
-        )
     }
 }

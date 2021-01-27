@@ -4,8 +4,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.ssho.fromustoeu.R
-import com.ssho.fromustoeu.copyTextToSystemClipboard
-import com.ssho.fromustoeu.showLongToast
+import com.ssho.fromustoeu.ui.copyTextToSystemClipboard
+import com.ssho.fromustoeu.ui.showLongToast
 import java.util.*
 
 @BindingAdapter("copyToClipboardOnLongClick")

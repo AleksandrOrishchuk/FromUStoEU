@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.ssho.fromustoeu.MainViewModel" />
+            type="com.ssho.fromustoeu.ui.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -44,7 +44,7 @@
             android:hint="@string/edit_number_hint"
             android:inputType="numberDecimal|numberSigned"
             android:maxLength="6"
-            android:text="@{viewModel.mainViewStateLiveData.component1()}"
+            android:text="@{viewModel.mainViewState.component1()}"
             android:textAlignment="center"
             android:textSize="36sp"
             app:layout_constraintBottom_toTopOf="@+id/fragment_container"
@@ -53,7 +53,6 @@
             app:layout_constraintTop_toTopOf="parent"
             closeKeyboardOnFocusChanged="@{true}"
             textChangedListener="@{viewModel.valueWatcher}" />
-<!--            app:onFocusChangeListener="@{viewModel.onFocusChangeListener}"-->
 
         <ToggleButton
             android:id="@+id/toggleButton"
@@ -84,7 +83,7 @@
             style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            selectItemByCurrentTab="@{viewModel.mainViewStateLiveData.component3()}"
+            selectItemByCurrentTab="@{viewModel.mainViewState.component3()}"
             app:onNavigationItemSelectedListener="@{viewModel.onNavigationItemSelectedListener}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

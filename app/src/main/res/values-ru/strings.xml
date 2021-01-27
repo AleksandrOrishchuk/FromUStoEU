@@ -28,5 +28,6 @@
     <string name="menu_tab_currency">Валюта</string>
     <string name="tab_under_development_text">Извините, в данный момент эта вкладка находится в разработке</string>
     <string name="litres">Литров</string>
+    <string name="down_arrow_image_description">Ваше число эквивалентно</string>
 
 </resources>

@@ -2,9 +2,9 @@ package com.ssho.fromustoeu.binding_adapters
 
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.ssho.fromustoeu.ConvertBucketListFragment
-import com.ssho.fromustoeu.ConvertBucket
-import com.ssho.fromustoeu.closeSoftKeyboard
+import com.ssho.fromustoeu.ui.ConversionResultUi
+import com.ssho.fromustoeu.ui.ConversionResultListFragment
+import com.ssho.fromustoeu.ui.closeSoftKeyboard
 
 @BindingAdapter("closeKeyboardOnScroll")
 fun bindCloseKeyboardOnScroll(recyclerView: RecyclerView, isActive: Boolean) {
@@ -22,8 +22,8 @@ fun bindCloseKeyboardOnScroll(recyclerView: RecyclerView, isActive: Boolean) {
 }
 
 @BindingAdapter("submitConvertBucketList")
-fun bindSubmitList(recyclerView: RecyclerView, convertBuckets: List<ConvertBucket>) {
+fun bindSubmitList(recyclerView: RecyclerView, conversionResultUiList: List<ConversionResultUi>) {
     (recyclerView.adapter
-            as ConvertBucketListFragment.ConvertBucketAdapter)
-            .submitList(convertBuckets)
+            as ConversionResultListFragment.ConversionResultAdapter)
+            .submitList(conversionResultUiList)
 }

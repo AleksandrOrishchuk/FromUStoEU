@@ -1,13 +1,13 @@
 package com.ssho.fromustoeu.binding_adapters
 
 import android.text.TextWatcher
-import android.view.View
 import android.widget.EditText
-import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ssho.fromustoeu.*
+import com.ssho.fromustoeu.ui.TAB_CURRENCY
+import com.ssho.fromustoeu.ui.TAB_HOME
+import com.ssho.fromustoeu.ui.closeSoftKeyboard
 
 @BindingAdapter("textChangedListener")
 fun bindTextWatcher(editText: EditText, textWatcher: TextWatcher) {
