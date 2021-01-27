@@ -39,9 +39,10 @@ android {
 dependencies {
     def coroutines_version = "1.4.2"
     def lifecycle_version = "2.2.0"
-    def room_version = "2.3.0-alpha03"
+    def room_version = "2.3.0-alpha04"
     def recyclerview_version = "1.1.0"
     def dataBinding_version = "4.1.1"
+    def retrofit_version = "2.9.0"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
@@ -52,12 +53,17 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.databinding:databinding-adapters:$dataBinding_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     kapt "androidx.room:room-compiler:$room_version"
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.20"
 }

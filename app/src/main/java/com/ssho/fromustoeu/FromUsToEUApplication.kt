@@ -1,11 +1,18 @@
 package com.ssho.fromustoeu
 
 import android.app.Application
+import com.ssho.fromustoeu.data.database.MeasureBucketsDatabase
+import com.ssho.fromustoeu.data.database.ExchangeRatesDatabase
+import com.ssho.fromustoeu.dependency_injection.initializeExchangeRatesRepository
+import com.ssho.fromustoeu.dependency_injection.initializeMeasureBucketsRepository
 
 class FromUsToEUApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        ConvertBucketRepository.initialize(this)
+
+        initializeMeasureBucketsRepository(this)
+        initializeExchangeRatesRepository(this)
+
     }
 }
