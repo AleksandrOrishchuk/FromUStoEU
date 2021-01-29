@@ -2,8 +2,6 @@ package com.ssho.fromustoeu.dependency_injection
 
 import android.content.Context
 import com.ssho.fromustoeu.data.api.ExchangeRatesApi
-import com.ssho.fromustoeu.data.converters.CurrencyConverter
-import com.ssho.fromustoeu.data.converters.MeasureConverter
 import com.ssho.fromustoeu.data.*
 import com.ssho.fromustoeu.data.database.ExchangeRatesDatabase
 import com.ssho.fromustoeu.data.database.MeasureBucketsDatabase
@@ -25,10 +23,7 @@ private val conversionDataMapper: ConversionDataMapper by lazy {
 }
 
 private val conversionResultUiMapperFactory: ConversionResultUiMapperFactory by lazy {
-    ConversionResultUiMapperFactory(
-        CurrencyConverter(),
-        MeasureConverter()
-    )
+    ConversionResultUiMapperFactory()
 }
 
 private val conversionDataInteractor: ConversionDataInteractor by lazy {

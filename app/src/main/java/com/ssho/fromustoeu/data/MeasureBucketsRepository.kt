@@ -23,7 +23,4 @@ private constructor(private val measureBucketsLocalDataSource: MeasureBucketsLoc
         return measureBucketsLocalDataSource.getConversionData(sourceMeasureSystem)
     }
 
-//    suspend fun getMeasureBuckets(appTab: String, measureSystemFrom: Int): List<MeasureBucket> {
-//        return measureBucketsDao.getBuckets(appTab, measureSystemFrom)
-//    }
 }

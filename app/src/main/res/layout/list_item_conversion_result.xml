@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/layout_stroke_convert_bucket"
         android:layout_margin="8dp"
-        copyToClipboardOnLongClick="@{viewModel.bucketViewState.component2()}">
+        copyToClipboardOnLongClick="@{viewModel.viewState.component2()}">
 
         <TextView
             android:id="@+id/source_unit_name_textView"
@@ -28,7 +28,7 @@
             android:textColor="@android:color/darker_gray"
             android:textSize="18sp"
             android:textStyle="italic"
-            setTextFromStringResourceName="@{viewModel.bucketViewState.component1()}"
+            setTextFromStringResourceName="@{viewModel.viewState.component1()}"
             app:layout_constraintBottom_toTopOf="@+id/down_arrow_imageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +53,7 @@
             android:id="@+id/converted_value_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{viewModel.bucketViewState.component2()}"
+            android:text="@{viewModel.viewState.component2()}"
             android:textAlignment="center"
             android:textSize="48sp"
             android:textStyle="bold"
@@ -75,7 +75,7 @@
             android:paddingTop="4dp"
             android:paddingEnd="4dp"
             android:paddingBottom="4dp"
-            setTextFromStringResourceName="@{viewModel.bucketViewState.component3()}"
+            setTextFromStringResourceName="@{viewModel.viewState.component3()}"
             android:textAlignment="center"
             android:textSize="24sp"
             android:textStyle="bold"

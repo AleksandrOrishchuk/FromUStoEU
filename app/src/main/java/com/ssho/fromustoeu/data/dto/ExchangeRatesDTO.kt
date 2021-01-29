@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import java.util.*
-import kotlin.collections.HashMap
 
 @Entity
 data class ExchangeRatesDTO(

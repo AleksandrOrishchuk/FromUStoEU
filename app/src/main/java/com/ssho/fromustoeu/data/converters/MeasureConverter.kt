@@ -4,14 +4,14 @@ import kotlin.math.abs
 
 class MeasureConverter : Converter {
 
-    override fun convert(sourceValue: Double, convertTargetName: String): Double {
+    override fun convert(sourceName: String, sourceValue: Double, targetName: String): Double {
         var value = sourceValue
 
-        if (convertTargetName != "celsius" && convertTargetName != "fahrenheits")
+        if (targetName != "celsius" && targetName != "fahrenheits")
             value = abs(value)
 
         value.let {
-            return when (convertTargetName) {
+            return when (targetName) {
                 "celsius" -> toCelsius(it)
                 "fahrenheits" -> toFahrenheits(it)
                 "meters" -> toMeters(it)
@@ -31,14 +31,6 @@ class MeasureConverter : Converter {
                 else -> it
             }
         }
-    }
-
-    override fun setExtras(rates: Map<String, Double>) {
-        //nothing
-    }
-
-    override fun setExtras(sourceCurrency: String) {
-        //nothing
     }
 
     private fun toOunces(input: Double): Double {

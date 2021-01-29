@@ -27,18 +27,24 @@ class ConversionDataMapper {
         val isSourceCurrencyUSD = sourceMeasureSystem == FROM_IMPERIAL_US
         if (isSourceCurrencyUSD)
             rates.forEach {
-                val pair = ConversionPair(baseCurrencyUsd, it.key)
+                val pair = ConversionPair(
+                        sourceUnitName = baseCurrencyUsd,
+                        targetUnitName =  it.key
+                )
                 conversionPairs.add(pair)
             }
         else
             rates.forEach {
-                val pair = ConversionPair(it.key, baseCurrencyUsd)
+                val pair = ConversionPair(
+                        sourceUnitName = it.key,
+                        targetUnitName =  baseCurrencyUsd
+                )
                 conversionPairs.add(pair)
             }
 
         return ConversionData(
                 exchangeRates = rates,
-                baseCurrency = baseCurrencyUsd,
+                baseCurrency = exchangeRatesDTO.base,
                 serverDataUpdatedDate = serverDate,
                 cachedDataDate = cachedDate,
                 conversionPairs = conversionPairs

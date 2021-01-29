@@ -1,21 +1,27 @@
 package com.ssho.fromustoeu.ui
 
-import com.ssho.fromustoeu.data.converters.Converter
+import com.ssho.fromustoeu.data.converters.CurrencyConverter
+import com.ssho.fromustoeu.data.converters.MeasureConverter
 import com.ssho.fromustoeu.data.model.ConversionData
 
-class ConversionResultUiMapperFactory(private val currencyConverter: Converter,
-                                      private val measureConverter: Converter) {
+class ConversionResultUiMapperFactory {
 
-
-    internal fun initializeMapper(appTab: String,
-                                  conversionData: ConversionData
-    ): ConversionOutputUiMappable {
+    internal fun initializeMapper(
+        appTab: String,
+        conversionData: ConversionData
+    ): ConversionResultUiMappable {
 
         return when (appTab) {
             TAB_CURRENCY ->
-                ConversionOutputUiCurrenciesMapper(conversionData, currencyConverter)
+                ConversionResultUiMapper(
+                    conversionData,
+                    CurrencyConverter(conversionData.exchangeRates)
+                )
             TAB_HOME  ->
-                ConversionOutputUiMeasuresMapper(conversionData, measureConverter)
+                ConversionResultUiMapper(
+                    conversionData,
+                    MeasureConverter()
+                )
 
             else ->
                 throw ExceptionInInitializerError("No Ui mapper provided for such conversion")

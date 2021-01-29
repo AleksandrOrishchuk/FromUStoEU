@@ -3,11 +3,9 @@ package com.ssho.fromustoeu.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
-private const val TAG = "ConversionResult"
-
 class ConversionResultViewModel {
-    val bucketViewState: LiveData<ConversionResultViewState> get() = _bucketViewState
-    private val _bucketViewState = MutableLiveData(ConversionResultViewState())
+    val viewState: LiveData<ConversionResultViewState> get() = _viewState
+    private val _viewState = MutableLiveData(ConversionResultViewState())
 
     fun mapConversionResult(conversionResultUi: ConversionResultUi) {
         updateViewState(
@@ -19,7 +17,7 @@ class ConversionResultViewModel {
     }
 
     private fun updateViewState(newViewState: ConversionResultViewState?) {
-        _bucketViewState.value = newViewState
+        _viewState.value = newViewState
     }
 }
 

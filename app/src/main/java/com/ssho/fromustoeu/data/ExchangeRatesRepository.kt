@@ -1,6 +1,7 @@
 package com.ssho.fromustoeu.data
 
 import android.text.format.DateFormat
+import android.util.Log
 import com.ssho.fromustoeu.data.model.ConversionData
 import java.util.*
 
@@ -31,7 +32,8 @@ class ExchangeRatesRepository private constructor(
 
     suspend fun getConversionData(sourceMeasureSystem: Int): ConversionData {
         val cachedData = exRatesLocalDataSource.getConversionData(sourceMeasureSystem)
-        if (cachedData.exchangeRates.isNotEmpty()) {
+
+        if (cachedData.conversionPairs.isNotEmpty()) {
             val currentDate = DateFormat.format(DATE_FORMAT, Date())
                     .toString()
             val cachedDate = DateFormat.format(DATE_FORMAT, cachedData.cachedDataDate)
@@ -40,8 +42,13 @@ class ExchangeRatesRepository private constructor(
                 return cachedData
         }
 
+        return getConversionDataFromInternet(sourceMeasureSystem)
+    }
+
+    private suspend fun getConversionDataFromInternet(sourceMeasureSystem: Int): ConversionData {
         return exRatesRemoteDataSource.getConversionData(sourceMeasureSystem).also {
             exRatesLocalDataSource.cacheConversionData(it)
+            Log.d(TAG, "Got exchange rates from remote source and cached to local.")
         }
     }
 }

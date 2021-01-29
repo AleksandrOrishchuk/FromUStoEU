@@ -8,7 +8,6 @@ import androidx.lifecycle.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ssho.fromustoeu.R
 import com.ssho.fromustoeu.data.ConversionDataInteractor
-import com.ssho.fromustoeu.data.model.ConversionData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -22,8 +21,6 @@ class MainViewModel(
     private val conversionDataInteractor: ConversionDataInteractor,
     private val conversionResultUiMapperFactory: ConversionResultUiMapperFactory
     ) : ViewModel() {
-
-    private var conversionData = ConversionData()
 
     val mainViewState: LiveData<MainViewState> get() = _mainViewStateLiveData
     val calculatorIntent: LiveData<ValueWrapper<Intent>> get() = _calculatorIntentLiveData
@@ -68,11 +65,11 @@ class MainViewModel(
                 else -> TAB_HOME
             }
             val currentAppTab = mainViewState.value?.appTab
+            val currentMeasureSystem = mainViewState.value?.measureSystemFrom ?: 1
 
             if (newAppTab != currentAppTab) {
-                val currentMeasureSystem = mainViewState.value?.measureSystemFrom ?: 1
-
                 updateConversionDataAndViewState(newAppTab, currentMeasureSystem)
+
                 Log.i(TAG, "Menu item selected: $newAppTab")
 
                 true
@@ -86,15 +83,24 @@ class MainViewModel(
     }
 
     fun onRegionClicked() {
+        val currentTab = mainViewState.value?.appTab.orEmpty()
         val currentMeasureSystem = mainViewState.value?.measureSystemFrom
-        val newMeasureFrom =
+        val newMeasureSystem =
                 if (currentMeasureSystem == FROM_IMPERIAL_US)
                     FROM_METRIC_EU
                 else
                     FROM_IMPERIAL_US
 
-        val currentTab = mainViewState.value?.appTab.orEmpty()
-        updateConversionDataAndViewState(currentTab, newMeasureFrom)
+        conversionDataInteractor.swapConversionPairs()
+
+        val conversionResultUiList = mapConversionResultUiList(currentTab)
+
+        updateViewState(
+            mainViewState.value?.copy(
+                measureSystemFrom = newMeasureSystem,
+                conversionResultUiList = conversionResultUiList
+            )
+        )
     }
 
     private fun updateCurrentValue(charSequence: CharSequence?) {
@@ -113,9 +119,10 @@ class MainViewModel(
         try {
             val newValueText = charSequence.toString()
             val newValue = newValueText.toDouble()
-            conversionData = conversionData.copy(sourceValue = newValue)
+            conversionDataInteractor.updateSourceValue(newValue)
+
             val appTab = mainViewState.value?.appTab.orEmpty()
-            val conversionOutputUiList = getConversionResultUiList(appTab)
+            val conversionOutputUiList = mapConversionResultUiList(appTab)
 
             updateViewState(
                     _mainViewStateLiveData.value?.copy(
@@ -134,12 +141,10 @@ class MainViewModel(
 
     private fun updateConversionDataAndViewState(appTab: String, sourceMeasureSystem: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val currentSourceValue = conversionData.sourceValue
-            conversionData =
-                conversionDataInteractor.getConversionData(appTab, sourceMeasureSystem)
-                    .copy(sourceValue = currentSourceValue)
 
-            val conversionOutputUiList = getConversionResultUiList(appTab)
+            conversionDataInteractor.updateConversionData(appTab, sourceMeasureSystem)
+
+            val conversionOutputUiList = mapConversionResultUiList(appTab)
 
             updateViewState(
                     _mainViewStateLiveData.value?.copy(
@@ -151,14 +156,16 @@ class MainViewModel(
         }
     }
 
-    private fun getConversionResultUiList(appTab: String): List<ConversionResultUi> {
+    private fun mapConversionResultUiList(appTab: String): List<ConversionResultUi> {
         if (appTab.isBlank())
             return emptyList()
 
-        val conversionOutputUiMapper =
+        val conversionData = conversionDataInteractor.conversionData
+
+        val conversionResultUiMapper =
             conversionResultUiMapperFactory.initializeMapper(appTab, conversionData)
 
-        return conversionOutputUiMapper.map()
+        return conversionResultUiMapper.map()
     }
 
     private fun updateViewState(newMainViewState: MainViewState?) {
@@ -171,10 +178,10 @@ class MainViewModel(
             initialValueText = INITIAL_VALUE.toString()
 
         _mainViewStateLiveData.value = MainViewState(
-                initialValueText,
-                INITIAL_SYSTEM_FROM,
-                INITIAL_APP_TAB,
-                INITIAL_IS_VALUE_PROVIDED
+            currentValueText = initialValueText,
+            measureSystemFrom = INITIAL_SYSTEM_FROM,
+            appTab = INITIAL_APP_TAB,
+            isValueProvided = INITIAL_IS_VALUE_PROVIDED
         )
 
         updateConversionDataAndViewState(INITIAL_APP_TAB, INITIAL_SYSTEM_FROM)
