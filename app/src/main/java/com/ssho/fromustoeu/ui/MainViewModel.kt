@@ -1,190 +1,147 @@
 package com.ssho.fromustoeu.ui
 
-import android.content.Intent
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
+import androidx.annotation.IdRes
 import androidx.lifecycle.*
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.ssho.fromustoeu.R
 import com.ssho.fromustoeu.data.ConversionDataInteractor
+import com.ssho.fromustoeu.data.ResultWrapper
+import com.ssho.fromustoeu.data.model.ConversionData
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val TAG = "MainViewModel"
 private const val INITIAL_VALUE = 55.5
-private const val INITIAL_SYSTEM_FROM = FROM_IMPERIAL_US
+private const val INITIAL_MEASURE_SYSTEM = FROM_IMPERIAL_US
 private const val INITIAL_APP_TAB = TAB_HOME
 private const val INITIAL_IS_VALUE_PROVIDED = false
 
 class MainViewModel(
-    private val conversionDataInteractor: ConversionDataInteractor,
-    private val conversionResultUiMapperFactory: ConversionResultUiMapperFactory
+        private val conversionDataInteractor: ConversionDataInteractor,
+        private val conversionResultUiMapperFactory: ConversionResultUiMapperFactory,
+        private val dispatcher: CoroutineDispatcher = Dispatchers.IO
     ) : ViewModel() {
 
-    val mainViewState: LiveData<MainViewState> get() = _mainViewStateLiveData
-    val calculatorIntent: LiveData<ValueWrapper<Intent>> get() = _calculatorIntentLiveData
-    private val _mainViewStateLiveData = MutableLiveData<MainViewState>()
-    private val _calculatorIntentLiveData = MutableLiveData<ValueWrapper<Intent>>()
-
-    val valueWatcher = object : TextWatcher {
-        override fun onTextChanged(
-            charSequence: CharSequence?,
-            start: Int,
-            before: Int,
-            count: Int
-        ) {
-            updateCurrentValue(charSequence)
-        }
-
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            //nothing
-        }
-
-        override fun afterTextChanged(s: Editable?) {
-            //nothing
-        }
-    }
-
-    val onNavigationItemSelectedListener =
-        BottomNavigationView.OnNavigationItemSelectedListener { item ->
-            if (item.itemId == R.id.tab_calculator) {
-                val calcIntent = Intent.makeMainSelectorActivity(
-                    Intent.ACTION_MAIN,
-                    Intent.CATEGORY_APP_CALCULATOR
-                ).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                _calculatorIntentLiveData.value = ValueWrapper(calcIntent)
-
-                return@OnNavigationItemSelectedListener false
-            }
-
-            val newAppTab = when (item.itemId) {
-                R.id.tab_currency -> TAB_CURRENCY
-                else -> TAB_HOME
-            }
-            val currentAppTab = mainViewState.value?.appTab
-            val currentMeasureSystem = mainViewState.value?.measureSystemFrom ?: 1
-
-            if (newAppTab != currentAppTab) {
-                updateConversionDataAndViewState(newAppTab, currentMeasureSystem)
-
-                Log.i(TAG, "Menu item selected: $newAppTab")
-
-                true
-            } else
-                false
-        }
+    val mainViewState: LiveData<MainViewState> get() = _mainViewState
+    val appTab: Int get() = _appTap
+    val sourceValueEditText: String get() = _sourceValueEditText
+    private val _mainViewState: MutableLiveData<MainViewState> = MutableLiveData()
+    private var _appTap = INITIAL_APP_TAB
+    private var _sourceValueEditText = if (INITIAL_IS_VALUE_PROVIDED) INITIAL_VALUE.toString() else ""
+    private var currentMeasureSystem = INITIAL_MEASURE_SYSTEM
+    private lateinit var currentConversionData: ConversionData
 
     init {
-        setInitialViewState()
+        refreshConversionDataAndUI()
         Log.d(TAG, "MainViewModel Initial load complete.")
     }
 
-    fun onRegionClicked() {
-        val currentTab = mainViewState.value?.appTab.orEmpty()
-        val currentMeasureSystem = mainViewState.value?.measureSystemFrom
-        val newMeasureSystem =
+    fun onChangeMeasureSystemClick() {
+        currentMeasureSystem =
                 if (currentMeasureSystem == FROM_IMPERIAL_US)
                     FROM_METRIC_EU
                 else
                     FROM_IMPERIAL_US
 
-        conversionDataInteractor.swapConversionPairs()
-
-        val conversionResultUiList = mapConversionResultUiList(currentTab)
-
-        updateViewState(
-            mainViewState.value?.copy(
-                measureSystemFrom = newMeasureSystem,
-                conversionResultUiList = conversionResultUiList
-            )
-        )
+        currentConversionData = currentConversionData.swapConversionPairs()
+        refreshUI()
     }
 
-    private fun updateCurrentValue(charSequence: CharSequence?) {
-        if (charSequence == null || charSequence.isEmpty())
-            return updateViewState(
-                    _mainViewStateLiveData.value?.copy(
-                            currentValueText = "",
-                            isValueProvided = false,
-                            conversionResultUiList = emptyList()
-                    )
-            )
+    fun onChangeAppTab(newAppTab: Int): Boolean {
+        if (newAppTab == appTab)
+            return false
+
+        _appTap = newAppTab
+        refreshConversionDataAndUI()
+
+        return true
+    }
+
+    fun onSourceValueChanged(charSequence: CharSequence?) {
+        if (charSequence == null || charSequence.isEmpty()) {
+            _sourceValueEditText = ""
+            return refreshUI()
+        }
 
         if (charSequence.length == 1 && charSequence[0] == '-')
             return
 
         try {
             val newValueText = charSequence.toString()
-            val newValue = newValueText.toDouble()
-            conversionDataInteractor.updateSourceValue(newValue)
+            val newValueDouble = newValueText.toDouble()
+            _sourceValueEditText = newValueText
 
-            val appTab = mainViewState.value?.appTab.orEmpty()
-            val conversionOutputUiList = mapConversionResultUiList(appTab)
+            refreshUI()
 
-            updateViewState(
-                    _mainViewStateLiveData.value?.copy(
-                            currentValueText = newValueText,
-                            isValueProvided = true,
-                            conversionResultUiList = conversionOutputUiList
-                    )
-            )
-
-            Log.d(TAG, "Value received from TextEdit: $newValue")
+            Log.d(TAG, "Value received from TextEdit: $newValueDouble")
 
         } catch (e: NumberFormatException) {
             Log.e(TAG, "Number Format Exception in TextEdit")
         }
     }
 
-    private fun updateConversionDataAndViewState(appTab: String, sourceMeasureSystem: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-
-            conversionDataInteractor.updateConversionData(appTab, sourceMeasureSystem)
-
-            val conversionOutputUiList = mapConversionResultUiList(appTab)
-
-            updateViewState(
-                    _mainViewStateLiveData.value?.copy(
-                            appTab = appTab,
-                            measureSystemFrom = sourceMeasureSystem,
-                            conversionResultUiList = conversionOutputUiList
-                    )
-            )
+    fun onForceRefreshUI() {
+        viewModelScope.launch(dispatcher) {
+            updateViewStateLiveData(
+                    MainViewState.Loading)
+            val response = conversionDataInteractor.getLatestConversionData(appTab)
+            unwrapResponseAndUpdateUI(response)
         }
     }
 
-    private fun mapConversionResultUiList(appTab: String): List<ConversionResultUi> {
-        if (appTab.isBlank())
-            return emptyList()
+    private fun refreshUI() {
+        if (mainViewState.value is MainViewState.Error || mainViewState.value is MainViewState.Loading)
+            return
+        if (sourceValueEditText.isBlank())
+            return updateViewStateLiveData(MainViewState.NoSourceValue)
 
-        val conversionData = conversionDataInteractor.conversionData
-
-        val conversionResultUiMapper =
-            conversionResultUiMapperFactory.initializeMapper(appTab, conversionData)
-
-        return conversionResultUiMapper.map()
-    }
-
-    private fun updateViewState(newMainViewState: MainViewState?) {
-        _mainViewStateLiveData.postValue(newMainViewState)
-    }
-
-    private fun setInitialViewState() {
-        var initialValueText = ""
-        if (INITIAL_IS_VALUE_PROVIDED)
-            initialValueText = INITIAL_VALUE.toString()
-
-        _mainViewStateLiveData.value = MainViewState(
-            currentValueText = initialValueText,
-            measureSystemFrom = INITIAL_SYSTEM_FROM,
-            appTab = INITIAL_APP_TAB,
-            isValueProvided = INITIAL_IS_VALUE_PROVIDED
+        updateViewStateLiveData(
+                MainViewState.Result(
+                        conversionResultUiList = mapCurrentResultUiList()
+                )
         )
+    }
 
-        updateConversionDataAndViewState(INITIAL_APP_TAB, INITIAL_SYSTEM_FROM)
+    private fun refreshConversionDataAndUI() {
+        viewModelScope.launch(dispatcher) {
+            updateViewStateLiveData(
+                    MainViewState.Loading
+            )
+            val response = conversionDataInteractor.getConversionData(appTab)
+            unwrapResponseAndUpdateUI(response)
+        }
+    }
+
+    private fun unwrapResponseAndUpdateUI(response: ResultWrapper<ConversionData>) {
+        when (response) {
+            is ResultWrapper.Success -> {
+                currentConversionData = response.value
+
+                if (currentMeasureSystem != FROM_IMPERIAL_US)
+                    currentConversionData = currentConversionData.swapConversionPairs()
+
+                updateViewStateLiveData(
+                        if (sourceValueEditText.isBlank())
+                            MainViewState.NoSourceValue
+                        else
+                            MainViewState.Result(conversionResultUiList = mapCurrentResultUiList())
+                )
+            }
+            else ->
+                updateViewStateLiveData(MainViewState.Error)
+        }
+    }
+
+    private fun mapCurrentResultUiList(): List<ConversionResultUi> {
+        return conversionResultUiMapperFactory
+                .initializeMapper(
+                        appTab = appTab,
+                        conversionData = currentConversionData
+                ).map(sourceValueEditText.toDoubleOrNull())
+    }
+
+    private fun updateViewStateLiveData(newMainViewState: MainViewState?) {
+        _mainViewState.postValue(newMainViewState)
     }
 }
 
@@ -195,20 +152,20 @@ class MainViewModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return MainViewModel(
-            conversionDataInteractor,
-            conversionResultUiMapperFactory
+                conversionDataInteractor,
+                conversionResultUiMapperFactory
         ) as T
     }
 }
 
-class ValueWrapper<T>(private val value: T) {
-    private var isConsumed = false
-
-    fun get(): T? =
-        if (isConsumed)
-            null
-        else {
-            isConsumed = true
-            value
-        }
-}
+//class OneTimeConsumingValue<T>(private val value: T) {
+//    private var isConsumed = false
+//
+//    fun get(): T? =
+//        if (isConsumed)
+//            null
+//        else {
+//            isConsumed = true
+//            value
+//        }
+//}

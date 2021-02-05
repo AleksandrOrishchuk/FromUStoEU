@@ -2,11 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <data>
-        <variable
-            name="viewModel"
-            type="com.ssho.fromustoeu.ui.MainViewModel" />
-    </data>
+<!--    <data>-->
+<!--        <variable-->
+<!--            name="viewModel"-->
+<!--            type="com.ssho.fromustoeu.ui.MainViewModel" />-->
+<!--    </data>-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -44,51 +44,99 @@
             android:hint="@string/edit_number_hint"
             android:inputType="numberDecimal|numberSigned"
             android:maxLength="6"
-            android:text="@{viewModel.mainViewState.component1()}"
             android:textAlignment="center"
             android:textSize="36sp"
             app:layout_constraintBottom_toTopOf="@+id/fragment_container"
-            app:layout_constraintEnd_toStartOf="@+id/toggleButton"
+            app:layout_constraintEnd_toStartOf="@+id/measure_system_toggle_switch"
             app:layout_constraintStart_toEndOf="@+id/convert_title"
-            app:layout_constraintTop_toTopOf="parent"
-            closeKeyboardOnFocusChanged="@{true}"
-            textChangedListener="@{viewModel.valueWatcher}" />
+            app:layout_constraintTop_toTopOf="parent" />
+<!--            android:text="@{viewModel.sourceValueEditText}"-->
+<!--            closeKeyboardOnFocusChanged="@{true}"-->
+<!--            textChangedListener="@{viewModel.valueWatcher}" />-->
 
         <ToggleButton
-            android:id="@+id/toggleButton"
+            android:id="@+id/measure_system_toggle_switch"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
-            android:onClick="@{() -> viewModel.onRegionClicked()}"
             android:textOn="@string/toggle_text_EU"
             android:textOff="@string/toggle_text_US"
             android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@+id/fragment_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+<!--            android:onClick="@{() -> viewModel.onRegionClicked()}"-->
 
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+            app:layout_constraintBottom_toTopOf="@+id/error_message_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/value_edit_text" />
+
+        <LinearLayout
+            android:id="@+id/error_message_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/loading_progress_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_container">
+
+            <ImageView
+                android:id="@+id/error_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/error_image_description"
+                android:src="@drawable/ic_baseline_error_cloud" />
+
+            <TextView
+                android:id="@+id/error_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="18dp"
+                android:text="@string/network_error_text"
+                android:textSize="24sp"
+                tools:text="Network Error" />
+
+            <Button
+                android:id="@+id/error_retry_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="18dp"
+                android:text="@string/try_again_button_text" />
+<!--                android:onClick="@{() -> viewModel.onForceRefreshUI()}"-->
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/loading_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="64dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/error_message_container" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
             style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            selectItemByCurrentTab="@{viewModel.mainViewState.component3()}"
-            app:onNavigationItemSelectedListener="@{viewModel.onNavigationItemSelectedListener}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/bottom_navigation_menu" />
+<!--            selectItemByCurrentTab="@{viewModel.appTab}"-->
+<!--            app:onNavigationItemSelectedListener="@{viewModel.onNavigationItemSelectedListener}"-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

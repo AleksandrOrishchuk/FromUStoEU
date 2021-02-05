@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.ssho.fromustoeu.data.database.entities.MeasureBucket
 
 private const val DATABASE_NAME = "measure-buckets-database"
 

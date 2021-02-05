@@ -1,8 +1,9 @@
 package com.ssho.fromustoeu.dependency_injection
 
 import android.content.Context
-import com.ssho.fromustoeu.data.api.ExchangeRatesApi
 import com.ssho.fromustoeu.data.*
+import com.ssho.fromustoeu.data.api.ApiRequestHandler
+import com.ssho.fromustoeu.data.api.ExchangeRatesApi
 import com.ssho.fromustoeu.data.database.ExchangeRatesDatabase
 import com.ssho.fromustoeu.data.database.MeasureBucketsDatabase
 import com.ssho.fromustoeu.ui.ConversionResultUiMapperFactory
@@ -18,6 +19,10 @@ private val exchangeRatesApi: ExchangeRatesApi by lazy {
     retrofit.create(ExchangeRatesApi::class.java)
 }
 
+private val apiRequestHandler: ApiRequestHandler by lazy {
+    ApiRequestHandler()
+}
+
 private val conversionDataMapper: ConversionDataMapper by lazy {
     ConversionDataMapper()
 }
@@ -26,17 +31,22 @@ private val conversionResultUiMapperFactory: ConversionResultUiMapperFactory by 
     ConversionResultUiMapperFactory()
 }
 
-private val conversionDataInteractor: ConversionDataInteractor by lazy {
-    ConversionDataInteractor(
-        MeasureBucketsRepository.get(),
-        ExchangeRatesRepository.get()
+private val  conversionDataRepositoryProvider: ConversionDataRepositoryProvider by lazy {
+    ConversionDataRepositoryProvider(
+            MeasureBucketsRepository.get(),
+            ExchangeRatesRepository.get()
     )
+}
+
+private val conversionDataInteractor: ConversionDataInteractor by lazy {
+    ConversionDataInteractor(conversionDataRepositoryProvider)
 }
 
 
 internal fun provideMainViewModelFactory() : MainViewModelFactory = MainViewModelFactory(
     conversionDataInteractor,
-    conversionResultUiMapperFactory
+    conversionResultUiMapperFactory,
+//    ConversionData()
 )
 
 internal fun initializeMeasureBucketsRepository(context: Context) {
@@ -57,7 +67,8 @@ internal fun initializeExchangeRatesRepository(context: Context) {
 
     val exRatesRemoteDataSource = ExRatesRemoteDataSource(
             conversionDataMapper,
-            exchangeRatesApi
+            exchangeRatesApi,
+            apiRequestHandler
     )
     val exRatesLocalDataSource = ExRatesLocalDataSource(
             conversionDataMapper,

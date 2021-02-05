@@ -26,5 +26,8 @@
     <string name="tab_under_development_text">Извините, в данный момент эта вкладка находится в разработке</string>
     <string name="litres">Литров</string>
     <string name="down_arrow_image_description">Ваше число эквивалентно</string>
+    <string name="error_image_description">Ошибка</string>
+    <string name="try_again_button_text">Обновить</string>
+    <string name="network_error_text">Ошибка сети. Проверьте интернет соединение и нажмите обновить.</string>
 
 </resources>

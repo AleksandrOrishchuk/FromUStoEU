@@ -1,4 +1,4 @@
-package com.ssho.fromustoeu.data.dto
+package com.ssho.fromustoeu.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import java.util.*
 
 @Entity
-data class ExchangeRatesDTO(
+data class ExchangeRatesEntity(
         @PrimaryKey
         val base: String = "",
         @SerializedName("date")

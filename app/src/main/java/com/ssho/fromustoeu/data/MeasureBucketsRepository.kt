@@ -3,7 +3,8 @@ package com.ssho.fromustoeu.data
 import com.ssho.fromustoeu.data.model.ConversionData
 
 class MeasureBucketsRepository
-private constructor(private val measureBucketsLocalDataSource: MeasureBucketsLocalDataSource) {
+private constructor(private val measureBucketsLocalDataSource: MeasureBucketsLocalDataSource
+) : ConversionDataRepository {
 
     companion object {
         private var INSTANCE: MeasureBucketsRepository? = null
@@ -19,8 +20,17 @@ private constructor(private val measureBucketsLocalDataSource: MeasureBucketsLoc
         }
     }
 
-    suspend fun getConversionData(sourceMeasureSystem: Int): ConversionData {
-        return measureBucketsLocalDataSource.getConversionData(sourceMeasureSystem)
+    override suspend fun getConversionData(): ResultWrapper<ConversionData> {
+        return measureBucketsLocalDataSource.getConversionData()
+
+    }
+
+    override suspend fun getLatestConversionData(): ResultWrapper<ConversionData> {
+        return getConversionData()
+    }
+
+    override suspend fun cacheConversionData(conversionData: ConversionData) {
+        throw IllegalAccessException("Can not write into Measure Buckets database.")
     }
 
 }

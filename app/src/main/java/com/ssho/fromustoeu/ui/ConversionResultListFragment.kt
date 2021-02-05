@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.ssho.fromustoeu.R
 import com.ssho.fromustoeu.databinding.FragmentConversionResultListBinding
 import com.ssho.fromustoeu.databinding.ListItemConversionResultBinding
@@ -21,13 +23,13 @@ private const val TAG = "ConvertListFragment"
 class ConversionResultListFragment : Fragment() {
 
     companion object {
-        private const val ARG_PARENT_STATE = "parent_view_state"
+        private const val CONVERSION_RESULT_LIST = "conversion_result_list"
 
-        fun newInstance(parentViewState: MainViewState): ConversionResultListFragment {
+        fun newInstance(conversionResultList: List<ConversionResultUi>): ConversionResultListFragment {
 
             return ConversionResultListFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable(ARG_PARENT_STATE, parentViewState)
+                    putString(CONVERSION_RESULT_LIST, Gson().toJson(conversionResultList))
                 }
             }
         }
@@ -36,17 +38,21 @@ class ConversionResultListFragment : Fragment() {
     private val fragmentViewModel: CResultListFragmentViewModel by lazy {
         ViewModelProvider(
             this,
-            CResultListFragmentViewModelFactory(parentViewState.conversionResultUiList)
+            CResultListFragmentViewModelFactory(conversionResultList)
         ).get(CResultListFragmentViewModel::class.java)
     }
 
     private lateinit var fragmentBinding: FragmentConversionResultListBinding
-    private lateinit var parentViewState: MainViewState
+    private lateinit var conversionResultList: List<ConversionResultUi>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        parentViewState = arguments?.getSerializable(ARG_PARENT_STATE) as MainViewState
+        conversionResultList =
+                Gson().fromJson(
+                        arguments?.getString(CONVERSION_RESULT_LIST),
+                        object : TypeToken<List<ConversionResultUi>>() {}.type
+                )
     }
 
     override fun onCreateView(

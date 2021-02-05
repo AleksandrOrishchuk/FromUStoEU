@@ -1,7 +1,6 @@
 package com.ssho.fromustoeu.data
 
 import android.text.format.DateFormat
-import android.util.Log
 import com.ssho.fromustoeu.data.model.ConversionData
 import java.util.*
 
@@ -10,7 +9,7 @@ private const val DATE_FORMAT = "MMM dd, yyyy"
 
 class ExchangeRatesRepository private constructor(
         private val exRatesLocalDataSource: ExRatesLocalDataSource,
-        private val exRatesRemoteDataSource: ExRatesRemoteDataSource) {
+        private val exRatesRemoteDataSource: ExRatesRemoteDataSource) : ConversionDataRepository {
 
     companion object {
         private var INSTANCE: ExchangeRatesRepository? = null
@@ -30,25 +29,41 @@ class ExchangeRatesRepository private constructor(
     }
 
 
-    suspend fun getConversionData(sourceMeasureSystem: Int): ConversionData {
-        val cachedData = exRatesLocalDataSource.getConversionData(sourceMeasureSystem)
+    override suspend fun getConversionData(): ResultWrapper<ConversionData> {
+        val cachedConversionData = exRatesLocalDataSource.getConversionData()
 
-        if (cachedData.conversionPairs.isNotEmpty()) {
-            val currentDate = DateFormat.format(DATE_FORMAT, Date())
-                    .toString()
-            val cachedDate = DateFormat.format(DATE_FORMAT, cachedData.cachedDataDate)
-                    .toString()
+        if (cachedConversionData is ResultWrapper.Success) {
+            val currentDate =
+                    DateFormat
+                            .format(DATE_FORMAT, Date())
+                            .toString()
+            val cachedDate =
+                    DateFormat
+                            .format(DATE_FORMAT, cachedConversionData.value.cachedDataDate)
+                            .toString()
             if (currentDate == cachedDate)
-                return cachedData
+
+                return cachedConversionData
         }
 
-        return getConversionDataFromInternet(sourceMeasureSystem)
+        return getConversionDataFromRemote().also {
+            if (it is ResultWrapper.Success)
+                cacheConversionData(it.value)
+        }
     }
 
-    private suspend fun getConversionDataFromInternet(sourceMeasureSystem: Int): ConversionData {
-        return exRatesRemoteDataSource.getConversionData(sourceMeasureSystem).also {
-            exRatesLocalDataSource.cacheConversionData(it)
-            Log.d(TAG, "Got exchange rates from remote source and cached to local.")
+    override suspend fun getLatestConversionData(): ResultWrapper<ConversionData> {
+        return getConversionDataFromRemote().also {
+            if (it is ResultWrapper.Success)
+                cacheConversionData(it.value)
         }
+    }
+
+    override suspend fun cacheConversionData(conversionData: ConversionData) {
+        exRatesLocalDataSource.cacheConversionData(conversionData)
+    }
+
+    private suspend fun getConversionDataFromRemote(): ResultWrapper<ConversionData> {
+        return exRatesRemoteDataSource.getConversionData()
     }
 }

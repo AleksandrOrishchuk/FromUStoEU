@@ -7,8 +7,8 @@ import com.ssho.fromustoeu.data.model.ConversionData
 class ConversionResultUiMapperFactory {
 
     internal fun initializeMapper(
-        appTab: String,
-        conversionData: ConversionData
+            appTab: Int,
+            conversionData: ConversionData
     ): ConversionResultUiMappable {
 
         return when (appTab) {

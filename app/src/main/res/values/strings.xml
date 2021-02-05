@@ -38,5 +38,8 @@
     <string name="aud" translatable="false">AUD</string>
     <string name="chf" translatable="false">CHF</string>
     <string name="down_arrow_image_description">Your number is equal to</string>
+    <string name="network_error_text">Network error occurred. Check your connection and retry.</string>
+    <string name="error_image_description">Error</string>
+    <string name="try_again_button_text">Retry</string>
 
 </resources>

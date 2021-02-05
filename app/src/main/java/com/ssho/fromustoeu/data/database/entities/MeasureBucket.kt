@@ -1,4 +1,4 @@
-package com.ssho.fromustoeu.data.database
+package com.ssho.fromustoeu.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

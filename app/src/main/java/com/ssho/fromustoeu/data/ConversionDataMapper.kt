@@ -1,11 +1,12 @@
 package com.ssho.fromustoeu.data
 
-import com.ssho.fromustoeu.ui.FROM_IMPERIAL_US
-import com.ssho.fromustoeu.data.database.MeasureBucket
-import com.ssho.fromustoeu.data.dto.ExchangeRatesDTO
+import com.ssho.fromustoeu.data.api.ExchangeRatesResponse
+import com.ssho.fromustoeu.data.database.entities.MeasureBucket
+import com.ssho.fromustoeu.data.database.entities.ExchangeRatesEntity
 import com.ssho.fromustoeu.data.model.ConversionData
 import com.ssho.fromustoeu.data.model.ConversionPair
 import java.util.*
+import kotlin.reflect.full.memberProperties
 
 class ConversionDataMapper {
 
@@ -17,42 +18,55 @@ class ConversionDataMapper {
         return ConversionData(conversionPairs = conversionPairs)
     }
 
-    fun map(exchangeRatesDTO: ExchangeRatesDTO, sourceMeasureSystem: Int): ConversionData {
-        val rates = exchangeRatesDTO.rates
-        val baseCurrencyUsd = exchangeRatesDTO.base.toLowerCase(Locale.ROOT)
-        val serverDate = exchangeRatesDTO.serverDate
-        val cachedDate = exchangeRatesDTO.cachedDate
-        val conversionPairs = mutableListOf<ConversionPair>()
+    fun map(exchangeRatesEntity: ExchangeRatesEntity): ConversionData {
+        val rates = exchangeRatesEntity.rates
+        val sourceCurrency = exchangeRatesEntity.base
 
-        val isSourceCurrencyUSD = sourceMeasureSystem == FROM_IMPERIAL_US
-        if (isSourceCurrencyUSD)
-            rates.forEach {
-                val pair = ConversionPair(
-                        sourceUnitName = baseCurrencyUsd,
-                        targetUnitName =  it.key
-                )
-                conversionPairs.add(pair)
-            }
-        else
-            rates.forEach {
-                val pair = ConversionPair(
-                        sourceUnitName = it.key,
-                        targetUnitName =  baseCurrencyUsd
-                )
-                conversionPairs.add(pair)
-            }
+        val conversionPairs = rates.map {
+            ConversionPair(
+                    sourceUnitName = sourceCurrency,
+                    targetUnitName = it.key
+            )
+        }
 
         return ConversionData(
                 exchangeRates = rates,
-                baseCurrency = exchangeRatesDTO.base,
-                serverDataUpdatedDate = serverDate,
-                cachedDataDate = cachedDate,
+                baseCurrency = sourceCurrency,
+                serverDataUpdatedDate = exchangeRatesEntity.serverDate,
+                cachedDataDate = exchangeRatesEntity.cachedDate,
                 conversionPairs = conversionPairs
         )
     }
 
-    fun map(conversionData: ConversionData): ExchangeRatesDTO {
-        return ExchangeRatesDTO(
+    fun map(response: ExchangeRatesResponse): ConversionData {
+        val rates = response.rates
+
+        val ratesMap = HashMap<String, Double>()
+        rates.javaClass.kotlin.memberProperties.forEach { property ->
+            val key = property.name
+            val value = property.get(rates) as Double
+            ratesMap[key] = value
+        }
+
+        val sourceCurrency = response.base.toLowerCase(Locale.ROOT)
+        val conversionPairs = ratesMap.map {
+            ConversionPair(
+                    sourceUnitName = sourceCurrency,
+                    targetUnitName = it.key
+            )
+        }
+
+        return ConversionData(
+                exchangeRates = ratesMap,
+                baseCurrency = sourceCurrency,
+                serverDataUpdatedDate = response.date,
+                cachedDataDate = Date(),
+                conversionPairs = conversionPairs
+        )
+    }
+
+    fun map(conversionData: ConversionData): ExchangeRatesEntity {
+        return ExchangeRatesEntity(
                 base = conversionData.baseCurrency,
                 serverDate = conversionData.serverDataUpdatedDate,
                 cachedDate = conversionData.cachedDataDate,
