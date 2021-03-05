@@ -2,27 +2,28 @@ package com.ssho.fromustoeu.data
 
 import com.ssho.fromustoeu.data.database.ExchangeRatesDao
 import com.ssho.fromustoeu.data.database.entities.ExchangeRatesEntity
-import com.ssho.fromustoeu.data.model.ConversionData
+import com.ssho.fromustoeu.data.model.ExchangeRatesData
 
 private const val TAG = "RatesLocalDS"
 
-class ExRatesLocalDataSource(private val conversionDataMapper: ConversionDataMapper,
-                             private val exchangeRatesDao: ExchangeRatesDao) {
+class ExRatesLocalDataSource(
+    private val exchangeRatesDataMapper: ExchangeRatesDataMapper,
+    private val exchangeRatesDao: ExchangeRatesDao
+) {
 
-    suspend fun cacheConversionData(conversionData: ConversionData) {
-        val exchangeRates = conversionDataMapper.map(conversionData)
+    suspend fun cacheConversionData(exchangeRatesData: ExchangeRatesData) {
+        val exchangeRates = exchangeRatesDataMapper.map(exchangeRatesData)
         exchangeRatesDao.cacheExchangeRates(exchangeRates)
     }
 
-    suspend fun getConversionData(): ResultWrapper<ConversionData> {
+    suspend fun getConversionData(): ExchangeRatesData {
         val cachedExchangeRates = getCachedExchangeRates()
         if (cachedExchangeRates.isEmpty())
-            return ResultWrapper.GenericError
+            throw LocalDataSourceEmptyException()
 
         val cachedExchangeRatesDTO = cachedExchangeRates[0]
-        val conversionData = conversionDataMapper.map(cachedExchangeRatesDTO)
 
-        return ResultWrapper.Success(conversionData)
+        return exchangeRatesDataMapper.map(cachedExchangeRatesDTO)
     }
 
     private suspend fun getCachedExchangeRates(): List<ExchangeRatesEntity> {
@@ -30,3 +31,5 @@ class ExRatesLocalDataSource(private val conversionDataMapper: ConversionDataMap
     }
 
 }
+
+class LocalDataSourceEmptyException : RuntimeException()

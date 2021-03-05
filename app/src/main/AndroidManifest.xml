@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FromUSToEU"
         android:fullBackupContent="@xml/backup_description">
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.ConverterActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

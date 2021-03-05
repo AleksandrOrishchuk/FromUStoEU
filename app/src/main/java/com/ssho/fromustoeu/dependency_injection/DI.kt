@@ -1,82 +1,85 @@
 package com.ssho.fromustoeu.dependency_injection
 
+import android.annotation.SuppressLint
 import android.content.Context
 import com.ssho.fromustoeu.data.*
-import com.ssho.fromustoeu.data.api.ApiRequestHandler
 import com.ssho.fromustoeu.data.api.ExchangeRatesApi
+import com.ssho.fromustoeu.data.converters.MeasureConverter
 import com.ssho.fromustoeu.data.database.ExchangeRatesDatabase
 import com.ssho.fromustoeu.data.database.MeasureBucketsDatabase
-import com.ssho.fromustoeu.ui.ConversionResultUiMapperFactory
-import com.ssho.fromustoeu.ui.MainViewModelFactory
+import com.ssho.fromustoeu.domain.ConversionPairsManager
+import com.ssho.fromustoeu.domain.GetConversionResultUseCase
+import com.ssho.fromustoeu.domain.GetConversionResultUseCaseImpl
+import com.ssho.fromustoeu.ui.ConverterViewModelFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private val exchangeRatesApi: ExchangeRatesApi by lazy {
-    val retrofit = Retrofit.Builder()
+@SuppressLint("StaticFieldLeak")
+object ConverterModule {
+
+    lateinit var androidContext: Context
+
+    private val exchangeRatesApi: ExchangeRatesApi by lazy {
+        val retrofit = Retrofit.Builder()
             .baseUrl("https://api.exchangeratesapi.io/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-    retrofit.create(ExchangeRatesApi::class.java)
-}
+        retrofit.create(ExchangeRatesApi::class.java)
+    }
 
-private val apiRequestHandler: ApiRequestHandler by lazy {
-    ApiRequestHandler()
-}
+    private val conversionDataMapper: ExchangeRatesDataMapper by lazy {
+        ExchangeRatesDataMapper()
+    }
 
-private val conversionDataMapper: ConversionDataMapper by lazy {
-    ConversionDataMapper()
-}
+    private val exchangeRatesDataRepository: ExchangeRatesDataRepository by lazy {
+        val exchangeRatesDatabase = ExchangeRatesDatabase.getExchangeRatesDatabase(androidContext)
 
-private val conversionResultUiMapperFactory: ConversionResultUiMapperFactory by lazy {
-    ConversionResultUiMapperFactory()
-}
-
-private val  conversionDataRepositoryProvider: ConversionDataRepositoryProvider by lazy {
-    ConversionDataRepositoryProvider(
-            MeasureBucketsRepository.get(),
-            ExchangeRatesRepository.get()
-    )
-}
-
-private val conversionDataInteractor: ConversionDataInteractor by lazy {
-    ConversionDataInteractor(conversionDataRepositoryProvider)
-}
-
-
-internal fun provideMainViewModelFactory() : MainViewModelFactory = MainViewModelFactory(
-    conversionDataInteractor,
-    conversionResultUiMapperFactory,
-//    ConversionData()
-)
-
-internal fun initializeMeasureBucketsRepository(context: Context) {
-    val measureBucketsDatabase = MeasureBucketsDatabase.getMeasureBucketsDatabase(context)
-    val measureBucketsLocalDataSource =
-            MeasureBucketsLocalDataSource(
-                    conversionDataMapper,
-                    measureBucketsDatabase.convertBucketDao()
-            )
-    MeasureBucketsRepository
-            .initialize(
-                    measureBucketsLocalDataSource
-            )
-}
-
-internal fun initializeExchangeRatesRepository(context: Context) {
-    val exchangeRatesDatabase = ExchangeRatesDatabase.getExchangeRatesDatabase(context)
-
-    val exRatesRemoteDataSource = ExRatesRemoteDataSource(
+        val exRatesRemoteDataSource = ExRatesRemoteDataSource(
             conversionDataMapper,
             exchangeRatesApi,
-            apiRequestHandler
-    )
-    val exRatesLocalDataSource = ExRatesLocalDataSource(
+        )
+        val exRatesLocalDataSource = ExRatesLocalDataSource(
             conversionDataMapper,
             exchangeRatesDatabase.exchangeRatesDao()
-    )
-    ExchangeRatesRepository
-            .initialize(
-                    exRatesLocalDataSource,
-                    exRatesRemoteDataSource
+        )
+
+        ExchangeRatesDataRepositoryImpl(
+            exRatesLocalDataSource,
+            exRatesRemoteDataSource
+        )
+    }
+
+    private val measurePairsRepository: ConversionPairsRepository by lazy {
+        val measureBucketsDatabase = MeasureBucketsDatabase.getMeasureBucketsDatabase(androidContext)
+        val measureBucketsLocalDataSource =
+            MeasureBucketsLocalDataSource(
+                measureBucketsDatabase.convertBucketDao()
             )
+        MeasurePairsRepository(measureBucketsLocalDataSource)
+    }
+
+    private val conversionPairsProvider: ConversionPairsProvidable by lazy {
+        ConversionPairsProvider(
+            CurrencyPairsRepository(exchangeRatesDataRepository),
+            measurePairsRepository
+        )
+    }
+
+    private val conversionPairsManager: ConversionPairsManager by lazy {
+        ConversionPairsManager(
+            conversionPairsProvider
+        )
+    }
+
+    private val getConversionResultUseCase: GetConversionResultUseCase by lazy {
+        GetConversionResultUseCaseImpl(
+            conversionPairsManager,
+            ConverterProvider(exchangeRatesDataRepository, MeasureConverter())
+        )
+    }
+
+    internal fun provideMainViewModelFactory(): ConverterViewModelFactory = ConverterViewModelFactory(
+        getConversionResultUseCase
+    )
+
 }

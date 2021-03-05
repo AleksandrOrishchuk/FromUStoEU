@@ -12,10 +12,10 @@ private const val DATABASE_NAME = "exchange-rates-database"
 @Database(entities = [ ExchangeRatesEntity::class ], version = 3, exportSchema = false)
 @TypeConverters(ExchangeRatesTypeConverters::class)
 abstract class ExchangeRatesDatabase : RoomDatabase() {
+
     companion object {
         @Volatile
         private var INSTANCE: ExchangeRatesDatabase? = null
-
 
         fun getExchangeRatesDatabase(context: Context): ExchangeRatesDatabase {
             return INSTANCE ?: synchronized(this) {

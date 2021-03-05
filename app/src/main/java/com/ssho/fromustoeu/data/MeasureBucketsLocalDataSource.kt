@@ -1,22 +1,17 @@
 package com.ssho.fromustoeu.data
 
 import com.ssho.fromustoeu.data.database.MeasureBucketsDao
-import com.ssho.fromustoeu.data.model.ConversionData
-import com.ssho.fromustoeu.ui.FROM_IMPERIAL_US
+import com.ssho.fromustoeu.data.database.entities.MeasureBucket
 
 class MeasureBucketsLocalDataSource(
-        private val conversionDataMapper: ConversionDataMapper,
-        private val measureBucketsDao: MeasureBucketsDao,
-        private val sourceMeasureSystemToQueryDatabase: Int = FROM_IMPERIAL_US) {
+    private val measureBucketsDao: MeasureBucketsDao
+) {
 
-    suspend fun getConversionData(): ResultWrapper<ConversionData> {
-        return try {
-            val measureBuckets = measureBucketsDao.getBuckets(sourceMeasureSystemToQueryDatabase)
-            val conversionData = conversionDataMapper.map(measureBuckets)
+    companion object{
+        private const val SOURCE_MEASURE_SYSTEM: Int = 1
+    }
 
-            ResultWrapper.Success(conversionData)
-        } catch (t: Throwable) {
-            ResultWrapper.GenericError
-        }
+    suspend fun getMeasureBuckets(): List<MeasureBucket> {
+        return measureBucketsDao.getBuckets(SOURCE_MEASURE_SYSTEM)
     }
 }
