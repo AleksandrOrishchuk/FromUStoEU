@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken
 import com.ssho.fromustoeu.R
 import com.ssho.fromustoeu.databinding.FragmentConversionResultListBinding
 import com.ssho.fromustoeu.databinding.ListItemConversionResultBinding
+import com.ssho.fromustoeu.ui.model.ConversionResultUi
 
 private const val TAG = "ConvertListFragment"
 
@@ -118,11 +119,11 @@ class ConversionResultListFragment : Fragment() {
 
     private inner class DiffUtilCallback : DiffUtil.ItemCallback<ConversionResultUi>() {
         override fun areItemsTheSame(oldItem: ConversionResultUi, newItem: ConversionResultUi): Boolean {
-            return false
+            return oldItem.resultValueText == newItem.resultValueText
         }
 
         override fun areContentsTheSame(oldItem: ConversionResultUi, newItem: ConversionResultUi): Boolean {
-            return false
+            return oldItem == newItem
         }
 
     }

@@ -2,6 +2,7 @@ package com.ssho.fromustoeu.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.ssho.fromustoeu.ui.model.ConversionResultUi
 
 class ConversionResultViewModel {
     val viewState: LiveData<ConversionResultViewState> get() = _viewState

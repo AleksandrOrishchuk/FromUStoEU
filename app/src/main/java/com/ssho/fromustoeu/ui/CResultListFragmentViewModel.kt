@@ -1,6 +1,7 @@
 package com.ssho.fromustoeu.ui
 
 import androidx.lifecycle.*
+import com.ssho.fromustoeu.ui.model.ConversionResultUi
 
 class CResultListFragmentViewModel(conversionResultUiList: List<ConversionResultUi>) : ViewModel() {
     val fragmentViewState: LiveData<FragmentViewState> get() = _fragmentViewState

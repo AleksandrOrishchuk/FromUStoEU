@@ -2,11 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-<!--    <data>-->
-<!--        <variable-->
-<!--            name="viewModel"-->
-<!--            type="com.ssho.fromustoeu.ui.MainViewModel" />-->
-<!--    </data>-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -14,7 +9,7 @@
         android:clickable="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        tools:context=".MainActivity">
+        tools:context=".FromUsToEUActivity">
 
 
         <TextView
@@ -50,9 +45,6 @@
             app:layout_constraintEnd_toStartOf="@+id/measure_system_toggle_switch"
             app:layout_constraintStart_toEndOf="@+id/convert_title"
             app:layout_constraintTop_toTopOf="parent" />
-<!--            android:text="@{viewModel.sourceValueEditText}"-->
-<!--            closeKeyboardOnFocusChanged="@{true}"-->
-<!--            textChangedListener="@{viewModel.valueWatcher}" />-->
 
         <ToggleButton
             android:id="@+id/measure_system_toggle_switch"
@@ -67,7 +59,6 @@
             app:layout_constraintBottom_toTopOf="@+id/fragment_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-<!--            android:onClick="@{() -> viewModel.onRegionClicked()}"-->
 
         <FrameLayout
             android:id="@+id/fragment_container"
@@ -87,7 +78,8 @@
             app:layout_constraintBottom_toTopOf="@+id/loading_progress_bar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_container">
+            app:layout_constraintTop_toBottomOf="@+id/fragment_container"
+            tools:visibility="gone">
 
             <ImageView
                 android:id="@+id/error_image_view"
@@ -112,7 +104,6 @@
                 android:layout_height="wrap_content"
                 android:padding="18dp"
                 android:text="@string/try_again_button_text" />
-<!--                android:onClick="@{() -> viewModel.onForceRefreshUI()}"-->
 
         </LinearLayout>
 
@@ -124,7 +115,8 @@
             app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/error_message_container" />
+            app:layout_constraintTop_toBottomOf="@+id/error_message_container"
+            tools:visibility="gone"/>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
@@ -135,8 +127,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/bottom_navigation_menu" />
-<!--            selectItemByCurrentTab="@{viewModel.appTab}"-->
-<!--            app:onNavigationItemSelectedListener="@{viewModel.onNavigationItemSelectedListener}"-->
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

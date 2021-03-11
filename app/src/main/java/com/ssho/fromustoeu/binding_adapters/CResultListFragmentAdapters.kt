@@ -2,7 +2,7 @@ package com.ssho.fromustoeu.binding_adapters
 
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.ssho.fromustoeu.ui.ConversionResultUi
+import com.ssho.fromustoeu.ui.model.ConversionResultUi
 import com.ssho.fromustoeu.ui.ConversionResultListFragment
 import com.ssho.fromustoeu.ui.closeSoftKeyboard
 

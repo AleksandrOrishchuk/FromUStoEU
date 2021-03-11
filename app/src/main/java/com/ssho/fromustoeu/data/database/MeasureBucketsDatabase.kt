@@ -10,6 +10,7 @@ private const val DATABASE_NAME = "measure-buckets-database"
 
 @Database(entities = [ MeasureBucket::class ], version = 1, exportSchema = false)
 abstract class MeasureBucketsDatabase : RoomDatabase() {
+
     companion object {
         @Volatile
         private var INSTANCE: MeasureBucketsDatabase? = null

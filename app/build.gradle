@@ -6,7 +6,7 @@ plugins {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.ssho.fromustoeu"
@@ -37,31 +37,38 @@ android {
 }
 
 dependencies {
-    def coroutines_version = "1.4.2"
-    def lifecycle_version = "2.2.0"
-    def room_version = "2.3.0-beta01"
-    def recyclerview_version = "1.1.0"
-    def retrofit_version = "2.9.0"
-
+    //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    //Coroutines
+    def coroutines_version = "1.4.2"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+
+    //AndroidX
+    def lifecycle_version = "2.3.0"
+    def room_version = "2.3.0-beta02"
+    def recyclerview_version = "1.1.0"
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     kapt "androidx.room:room-compiler:$room_version"
-    testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.21"
+
+    //Retrofit
+    def retrofit_version = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+
+    //JUnit
+    testImplementation 'junit:junit:4.13.2'
 }
